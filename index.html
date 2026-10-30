@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Manual de mapeamento de processos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
+<style>
+/* Tokens: identidade Empresa JR (escuro como padrão) */
+:root{
+  --bg:#00031B; --bg-2:#04002B; --panel:rgba(6,10,52,.78); --panel-solid:#070C3C;
+  --line-soft:rgba(150,165,255,.18); --line-strong:rgba(190,200,255,.42);
+  --ink:#F1F3FF; --muted:#A9B1D8; --link:#93A5FF; --tint:rgba(0,26,255,.16);
+  --blue:#001AFF; --blue-2:#002CAE; --deep:#001450;
+  --accent:#EAC200; --accent-ink:#00031B; --ok:#7BE0A6;
+  --glow-1:rgba(0,26,255,.55); --glow-2:rgba(0,44,174,.5); --glow-3:rgba(0,26,255,.22);
+  --display:"Archivo","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --font:"Archivo","Helvetica Neue",Helvetica,Arial,system-ui,sans-serif;
+  --topbar:60px;
+  color-scheme:dark;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#F3F5FF; --bg-2:#E6EAFF; --panel:rgba(255,255,255,.86); --panel-solid:#FFFFFF;
+    --line-soft:rgba(0,20,80,.13); --line-strong:rgba(0,20,80,.32);
+    --ink:#00031B; --muted:#4A5378; --link:#0019E0; --tint:rgba(0,26,255,.07);
+    --ok:#1D7A4A; --glow-1:rgba(0,26,255,.20); --glow-2:rgba(0,44,174,.16); --glow-3:rgba(0,26,255,.08);
+    color-scheme:light;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#F3F5FF; --bg-2:#E6EAFF; --panel:rgba(255,255,255,.86); --panel-solid:#FFFFFF;
+  --line-soft:rgba(0,20,80,.13); --line-strong:rgba(0,20,80,.32);
+  --ink:#00031B; --muted:#4A5378; --link:#0019E0; --tint:rgba(0,26,255,.07);
+  --ok:#1D7A4A; --glow-1:rgba(0,26,255,.20); --glow-2:rgba(0,44,174,.16); --glow-3:rgba(0,26,255,.08);
+  color-scheme:light;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + var(--topbar) + 12px);-webkit-text-size-adjust:100%}
+body{margin:0;font-family:var(--font);color:var(--ink);background:var(--bg);font-size:1rem;line-height:1.65;min-height:100vh}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(42% 38% at 8% 0%, var(--glow-1), transparent 70%),
+    radial-gradient(34% 34% at 96% 6%, var(--glow-2), transparent 70%),
+    radial-gradient(40% 32% at 55% 100%, var(--glow-3), transparent 70%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
+}
+a{color:var(--link)}
+img,svg{max-width:100%}
+:focus-visible{outline:2.5px solid var(--accent);outline-offset:2px}
+button{font:inherit;color:inherit}
+h1[tabindex="-1"]:focus{outline:none}
+
+/* Barra superior */
+.topbar{
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:30;height:var(--topbar);
+  display:flex;align-items:center;gap:12px;padding:0 16px;
+  background:color-mix(in srgb, var(--bg) 78%, transparent);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line-soft);
+}
+.menu-btn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border:1px solid var(--line-strong);background:transparent;border-radius:999px;cursor:pointer;flex:none}
+.menu-btn svg{width:18px;height:18px}
+.logo-link{display:flex;align-items:center;flex:none}
+.logo{height:28px;width:auto;display:block}
+.logo-light{display:none}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]) .logo-dark{display:none}:root:not([data-theme="dark"]) .logo-light{display:block}}
+:root[data-theme="light"] .logo-dark{display:none}
+:root[data-theme="light"] .logo-light{display:block}
+.title-pill{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line-strong);border-radius:999px;padding:6px 14px;font-size:.84rem}
+.title-pill a{color:var(--ink);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.progress{display:flex;align-items:center;gap:10px;color:var(--muted);white-space:nowrap;flex:none}
+.bar{width:96px;height:5px;border-radius:3px;background:var(--tint);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .4s ease}
+@media (max-width:560px){
+  .title-pill a{display:none}
+  .title-pill{justify-content:flex-end;flex:1}
+  .bar{width:56px}
+  .logo{height:24px}
+}
+
+/* Estrutura */
+.layout{display:grid;grid-template-columns:1fr}
+.index{
+  position:fixed;z-index:40;top:0;left:0;bottom:0;width:min(86vw,320px);
+  padding:calc(env(safe-area-inset-top,0px) + 16px) 12px calc(env(safe-area-inset-bottom,0px) + 16px);
+  background:var(--panel-solid);border-right:1px solid var(--line-soft);overflow-y:auto;
+  transform:translateX(-102%);transition:transform .25s ease;
+}
+.index.open{transform:none}
+.scrim{position:fixed;inset:0;z-index:35;background:rgba(0,3,27,.55);display:none}
+.scrim.show{display:block}
+.ix-head{display:flex;justify-content:space-between;align-items:center;padding:4px 8px 12px;border-bottom:1px solid var(--line-soft);margin-bottom:8px}
+.ix-head strong{font-family:var(--display);font-stretch:70%;font-weight:700;text-transform:uppercase;font-size:1.15rem;letter-spacing:.02em}
+.ix-close{border:0;background:transparent;cursor:pointer;padding:6px;border-radius:6px}
+.ix-close svg{width:18px;height:18px}
+.ix-list{list-style:none;margin:0;padding:0}
+.ix-item{display:grid;grid-template-columns:32px 1fr 18px;align-items:center;gap:6px;padding:9px 10px;border-radius:12px;text-decoration:none;color:var(--ink);font-size:.92rem;line-height:1.3}
+.ix-item:hover{background:var(--tint)}
+.ix-item[aria-current="page"]{background:linear-gradient(90deg,var(--blue),var(--blue-2));color:#fff}
+.ix-item[aria-current="page"] .ix-n{color:#fff}
+.ix-n{font-family:var(--display);font-weight:700;font-stretch:65%;font-size:1.05rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.ix-ok{width:16px;height:16px;color:var(--ok);visibility:hidden}
+.ix-item.seen .ix-ok{visibility:visible}
+.ix-item[aria-current="page"] .ix-ok{color:#fff}
+.ix-sub{list-style:none;margin:2px 0 6px 38px;padding:0;border-left:1px solid var(--line-soft)}
+.ix-sub .ix-item{grid-template-columns:1fr 18px;font-size:.86rem;padding:6px 10px}
+.ix-foot{margin-top:14px;padding:12px 8px 0;border-top:1px solid var(--line-soft)}
+.link-btn{background:none;border:0;padding:4px 0;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:.85rem}
+
+main{padding:20px 14px 48px;min-width:0}
+.sheet{max-width:820px;margin:0 auto 18px;background:var(--panel);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid var(--line-soft);border-radius:22px;padding:22px 20px 26px}
+@media (min-width:1000px){
+  .menu-btn,.ix-close,.scrim{display:none !important}
+  .layout{grid-template-columns:300px 1fr}
+  .index{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--topbar));height:calc(100dvh - var(--topbar) - env(safe-area-inset-top,0px));transform:none;width:auto;z-index:1;padding-top:16px;background:transparent;border-right:1px solid var(--line-soft)}
+  main{padding:30px 32px 64px}
+  .sheet{padding:30px 38px 36px}
+}
+
+/* Tipografia */
+h1,h2,h3,h4{line-height:1.15;margin:0}
+.display{font-family:var(--display);font-stretch:64%;font-weight:700;text-transform:uppercase;letter-spacing:.005em;line-height:.95}
+.sheet h2{font-size:1.28rem;font-weight:700;margin:2em 0 .6em;padding-top:.9em;border-top:1px solid var(--line-soft)}
+.sheet h3{font-size:1.06rem;font-weight:700;margin:1.5em 0 .4em}
+.sheet p{margin:.7em 0;max-width:68ch}
+.lead{font-size:1.1rem;line-height:1.6}
+.muted{color:var(--muted)}
+.sheet ul,.sheet ol{padding-left:1.25em;max-width:66ch}
+.sheet li{margin:.35em 0}
+strong,b{font-weight:650}
+
+/* Cabeçalho do módulo (card azul da marca) */
+.mod-head{
+  position:relative;overflow:hidden;border-radius:18px;padding:18px 20px 22px;margin:0 0 20px;color:#fff;
+  background:linear-gradient(165deg,#001AFF 0%,#002CAE 48%,#001450 100%);
+}
+.mod-head::after{content:"";position:absolute;right:-60px;top:-70px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.35),transparent 65%);filter:blur(8px);pointer-events:none}
+.mod-pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;position:relative;z-index:1}
+.mod-pills span{border:1px solid rgba(255,255,255,.55);border-radius:999px;padding:2px 10px;font-size:.76rem;line-height:1.5}
+.mod-num{font-size:3rem;display:block;margin-bottom:4px;position:relative;z-index:1}
+.mod-head h1{font-size:clamp(2rem,6.4vw,3rem);position:relative;z-index:1}
+.mod-head p{margin:.55em 0 0;color:rgba(255,255,255,.86);font-size:.97rem;line-height:1.45;max-width:58ch;position:relative;z-index:1}
+.crumbs{font-size:.82rem;color:var(--muted);margin:0 0 12px;display:flex;flex-wrap:wrap;gap:6px}
+.crumbs a{color:var(--muted)}
+.crumbs span[aria-current]{color:var(--ink);font-weight:600}
+
+/* Resumo para leitura rápida */
+.resumo{border:1px solid var(--line-strong);border-radius:16px;padding:14px 18px 10px;margin:0 0 8px;background:var(--tint)}
+.resumo h2{border:0 !important;padding:0 !important;margin:0 0 4px !important;font-size:.95rem !important;display:flex;align-items:center;gap:8px}
+.resumo h2::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--accent);flex:none}
+.resumo ul{margin:.3em 0 .4em;max-width:none}
+.resumo li{margin:.25em 0}
+
+/* Blocos */
+.callout{border-left:4px solid var(--accent);background:var(--tint);padding:12px 16px;margin:1.2em 0;border-radius:0 12px 12px 0}
+.callout p{margin:.3em 0}
+.callout b{display:block;margin-bottom:2px}
+dl.terms{margin:1em 0;display:grid;gap:12px}
+dl.terms div{padding-left:14px;border-left:2px solid var(--blue)}
+dl.terms dt{font-weight:700}
+dl.terms dd{margin:2px 0 0}
+.sheet ol.steps,.sheet ul.toc,.sheet ul.subindex,.sheet ul.legend,.sheet ol.levels{max-width:none;padding-left:0}
+ol.steps{list-style:none;counter-reset:st;margin:1em 0}
+ol.steps > li{counter-increment:st;position:relative;padding:0 0 14px 46px;margin:0}
+ol.steps > li::before{content:counter(st);position:absolute;left:0;top:0;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.85rem;background:linear-gradient(160deg,var(--blue),var(--blue-2));color:#fff}
+ol.steps > li:not(:last-child)::after{content:"";position:absolute;left:15px;top:33px;bottom:2px;border-left:1.5px dashed var(--line-strong)}
+ol.steps b{display:block}
+.tbl{overflow-x:auto;margin:1.2em 0;border:1px solid var(--line-soft);border-radius:14px}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:.93rem}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line-soft)}
+th{background:var(--tint);font-weight:700}
+tr:last-child td{border-bottom:0}
+.pairs{margin:1.2em 0;border:1px solid var(--line-soft);border-radius:14px;overflow:hidden}
+.pairs .row{display:grid;grid-template-columns:1fr;border-bottom:1px solid var(--line-soft)}
+.pairs .row:last-child{border-bottom:0}
+.pairs .row > div{padding:10px 14px;font-size:.94rem}
+.pairs .hd{background:var(--tint);font-weight:700}
+.pairs .asis::before,.pairs .tobe::before{display:block;font-size:.74rem;color:var(--muted);font-weight:600}
+.pairs .asis::before{content:"AS-IS"}
+.pairs .tobe::before{content:"TO-BE"}
+.pairs .hd > div::before{content:none}
+@media (min-width:640px){
+  .pairs .row{grid-template-columns:1fr 1fr}
+  .pairs .row > div + div{border-left:1px solid var(--line-soft)}
+  .pairs .asis::before,.pairs .tobe::before{content:none}
+}
+@media (max-width:639px){.pairs .hd{display:none}}
+
+/* Diagramas: tela branca, como os desenhos exportados do Lucid */
+figure{margin:1.4em 0}
+.canvas{overflow-x:auto;border-radius:14px;background:#FFFFFF;padding:12px;border:1px solid var(--line-soft)}
+.canvas svg{display:block;width:100%;height:auto}
+.canvas.wide svg{min-width:1180px}
+.canvas.mid svg{min-width:960px}
+.canvas.sm svg{min-width:480px}
+.plain-fig{overflow-x:auto}
+.plain-fig svg{display:block;width:100%;height:auto;min-width:520px}
+figcaption{font-size:.84rem;color:var(--muted);margin-top:8px}
+svg text{font-family:var(--font)}
+/* estilo Lucid (cores fixas) */
+.lc-task{fill:url(#lcTask);stroke:#7E7E7E;stroke-width:1.2}
+.lc-task.thick{stroke:#3a3a3a;stroke-width:3.2}
+.lc-ev{fill:url(#lcBlue);stroke:#16357F;stroke-width:1.4}
+.lc-ring{fill:none;stroke:#fff;stroke-width:1.3}
+.lc-end{fill:#151515;stroke:#000;stroke-width:3}
+.lc-gw{fill:url(#lcBlue);stroke:#16357F;stroke-width:1.2}
+.lc-w{fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.lc-wthin{fill:none;stroke:#fff;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round}
+.lc-ic{fill:none;stroke:#1d1d1d;stroke-width:1.25;stroke-linecap:round;stroke-linejoin:round}
+.lc-icf{fill:#1d1d1d}
+.lc-icinv{fill:none;stroke:#EDEDED;stroke-width:1.2;stroke-linejoin:round}
+.lc-gear{fill:none;stroke:#1d1d1d;stroke-width:2.8;stroke-dasharray:2.1 1.7}
+.lc-t{fill:#1d1d1d;font-size:11.5px}
+.lc-lbl{fill:#454545;font-size:10.5px}
+.lc-flow{fill:none;stroke:#1d1d1d;stroke-width:1.3}
+.lc-msg{fill:none;stroke:#1d1d1d;stroke-width:1.2;stroke-dasharray:5 4}
+.lc-assoc{fill:none;stroke:#1d1d1d;stroke-width:1.2;stroke-dasharray:1.5 3.5;stroke-linecap:round}
+.lc-open{fill:#fff;stroke:#1d1d1d;stroke-width:1.2}
+.lc-pool{fill:#fff;stroke:#3a3a3a;stroke-width:1.4}
+.lc-band{fill:#1E24F0}
+.lc-band-t{fill:#fff;font-size:12px;font-weight:600}
+.lc-lane{stroke:#9aa0b8;stroke-width:1}
+.lc-note{fill:none;stroke:#8a8a8a;stroke-width:1;stroke-dasharray:4 3}
+.lc-note-t{fill:#555;font-size:10px}
+.lc-title{fill:#3b3b3b}
+.lc-title-t{fill:#fff;font-size:12px}
+.lc-doc{fill:url(#lcTask);stroke:#7E7E7E;stroke-width:1.2}
+.lc-link{fill:#F8CDF1;stroke:#D25CC6;stroke-width:1.8}
+.lc-link-ring{fill:none;stroke:#D25CC6;stroke-width:1}
+.lc-link-in{fill:#111}
+.lc-link-out{fill:#fff;stroke:#222;stroke-width:1.1;stroke-linejoin:round}
+.ok-badge{fill:#6CC06A}.no-badge{fill:#D8352A}
+.lc-group{fill:none;stroke:#555;stroke-width:1.2;stroke-dasharray:8 3 2 3}
+.mk circle{fill:#EAC200;stroke:#00031B;stroke-width:1}
+.mk text{fill:#00031B;font-size:12px;font-weight:700}
+/* estilo do tema (diagramas conceituais) */
+.t-box{fill:var(--panel-solid);stroke:var(--line-strong);stroke-width:1.2}
+.t-col{fill:var(--tint)}
+.t-sep{stroke:var(--line-soft);stroke-width:1}
+.t-line{fill:none;stroke:var(--line-strong);stroke-width:1.3}
+.t-t{fill:var(--ink);font-size:12px}
+.t-tb{fill:var(--ink);font-size:12px;font-weight:600}
+.t-lbl{fill:var(--muted);font-size:11px}
+.t-flow{fill:none;stroke:var(--ink);stroke-width:1.4}
+.t-acc{fill:none;stroke:var(--accent);stroke-width:2.4}
+.t-dot{fill:var(--panel-solid);stroke:var(--accent);stroke-width:2.4}
+.t-ev{fill:none;stroke:var(--ink);stroke-width:1.6}
+.t-evend{fill:none;stroke:var(--ink);stroke-width:3.6}
+.t-gw{fill:none;stroke:var(--ink);stroke-width:1.4}
+.t-x{fill:none;stroke:var(--ink);stroke-width:2.2;stroke-linecap:round}
+.t-task{fill:var(--tint);stroke:var(--line-strong);stroke-width:1.2}
+.arrow-ink{fill:var(--ink)}
+.arrow-acc{fill:var(--accent)}
+
+.legend{list-style:none;margin:1em 0;display:grid;gap:10px}
+.legend li{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start;margin:0}
+.legend .mkr{width:24px;height:24px;border-radius:50%;background:#EAC200;color:#00031B;display:grid;place-items:center;font-weight:700;font-size:.8rem;margin-top:1px}
+
+/* Símbolos BPMN */
+.syms{display:grid;grid-template-columns:1fr;gap:0;margin:1.2em 0;border-top:1px solid var(--line-soft)}
+@media (min-width:760px){.syms{grid-template-columns:1fr 1fr;column-gap:28px}}
+.sym{display:grid;grid-template-columns:92px 1fr;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line-soft)}
+.sym-fig{background:#fff;border-radius:12px;padding:4px}
+.sym-fig svg{width:84px;height:60px;display:block}
+.sym-fig .lc-t{font-size:10.5px}
+.sym h4{font-size:.98rem;font-weight:700}
+.sym p{margin:.2em 0 0 !important;font-size:.9rem;line-height:1.45;color:var(--muted)}
+
+/* Hierarquia */
+.levels{list-style:none;margin:1.2em 0}
+.levels li{margin:0 0 6px;padding:10px 14px;border:1px solid var(--line-soft);border-left:4px solid var(--blue);border-radius:4px 12px 12px 4px;background:var(--tint)}
+.levels li b{display:block}
+.levels li span{font-size:.9rem;color:var(--muted)}
+.levels li:nth-child(2){margin-left:4%}.levels li:nth-child(3){margin-left:8%}.levels li:nth-child(4){margin-left:12%}.levels li:nth-child(5){margin-left:16%}
+
+/* Entrada, atividades, saída */
+.ipo{display:grid;grid-template-columns:1fr;margin:1.2em 0}
+.ipo > div{border:1px solid var(--line-strong);border-radius:14px;padding:12px 14px}
+.ipo > div b{display:block}
+.ipo > div span{font-size:.9rem;color:var(--muted)}
+.ipo .mid{background:linear-gradient(160deg,var(--blue),var(--blue-2));border-color:transparent;color:#fff}
+.ipo .mid span{color:rgba(255,255,255,.85)}
+.ipo .arr{border:0;height:22px;padding:0;display:grid;place-items:center;color:var(--muted)}
+.ipo .arr svg{width:14px;height:14px;transform:rotate(90deg)}
+@media (min-width:640px){
+  .ipo{grid-template-columns:1fr 24px 1.3fr 24px 1fr}
+  .ipo .arr{height:auto}
+  .ipo .arr svg{transform:none}
+}
+
+/* Sub-índice */
+.subindex{list-style:none;margin:1.2em 0;display:grid;gap:10px}
+@media (min-width:640px){.subindex{grid-template-columns:1fr 1fr}}
+.subindex a{display:grid;grid-template-columns:64px 1fr;gap:12px;align-items:center;padding:10px;border:1px solid var(--line-strong);border-radius:16px;text-decoration:none;color:var(--ink)}
+.subindex a:hover{background:var(--tint)}
+.subindex .fig{background:#fff;border-radius:10px;padding:2px}
+.subindex svg{width:60px;height:42px;display:block}
+.subindex b{display:block}
+.subindex span{font-size:.86rem;color:var(--muted);line-height:1.35;display:block}
+.subindex .seen-tag{color:var(--ok);font-weight:600;font-size:.78rem}
+
+/* Campos do Notion */
+.fields{margin:1.2em 0;border:1px solid var(--line-soft);border-radius:14px;overflow:hidden}
+.fields div{display:grid;grid-template-columns:1fr;gap:2px;padding:10px 14px;border-bottom:1px solid var(--line-soft)}
+.fields div:last-child{border-bottom:0}
+.fields dt{font-weight:700}
+.fields dd{margin:0;color:var(--muted);font-size:.93rem}
+@media (min-width:640px){.fields div{grid-template-columns:170px 1fr;gap:14px}}
+
+/* Acordeões */
+details{border-bottom:1px solid var(--line-soft)}
+details:first-of-type{border-top:1px solid var(--line-soft)}
+summary{cursor:pointer;padding:12px 4px;font-weight:650;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-weight:700;color:var(--muted);flex:none}
+details[open] summary::after{content:"–"}
+details > div{padding:0 4px 12px}
+details > div p{margin:.2em 0 .6em}
+
+/* Navegação entre módulos */
+.pagenav{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin-top:34px;padding-top:18px;border-top:1px solid var(--line-soft)}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:10px 18px;border-radius:999px;border:1px solid var(--line-strong);text-decoration:none;color:var(--ink);font-weight:650;cursor:pointer;line-height:1.25;background:transparent}
+.btn:hover{background:var(--tint)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.06)}
+.btn small{display:block;font-weight:500;font-size:.74rem;opacity:.8}
+.btn svg{width:16px;height:16px;flex:none}
+.pagenav .next{margin-left:auto;text-align:right}
+
+/* Capa */
+.cover h1{font-size:clamp(2.8rem,10vw,5rem);margin:18px 0 14px}
+.cover .lead{max-width:56ch}
+.hero-flow{margin:4px 0 0;padding-bottom:16px;border-bottom:1px solid var(--line-soft)}
+.hero-flow svg{width:100%;height:auto;display:block}
+.hero-flow .draw{stroke-dasharray:var(--len);stroke-dashoffset:var(--len);animation:draw .5s ease forwards;animation-delay:var(--d)}
+.hero-flow .pop{opacity:0;animation:pop .35s ease forwards;animation-delay:var(--d)}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes pop{to{opacity:1}}
+@media (prefers-reduced-motion:reduce){
+  .hero-flow .draw{animation:none;stroke-dashoffset:0}
+  .hero-flow .pop{animation:none;opacity:1}
+  .index,.bar i{transition:none}
+}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0 8px}
+.howto{display:grid;grid-template-columns:1fr;gap:10px;margin:18px 0 0}
+@media (min-width:640px){.howto{grid-template-columns:1fr 1fr}}
+.howto div{border:1px solid var(--line-soft);border-radius:14px;padding:12px 14px;background:var(--tint)}
+.howto b{display:block;margin-bottom:2px}
+.howto span{font-size:.9rem;color:var(--muted)}
+.toc{list-style:none;margin:12px 0 0;display:grid;gap:10px}
+@media (min-width:700px){.toc{grid-template-columns:1fr 1fr}}
+.toc a{display:grid;grid-template-columns:1fr 20px;gap:6px;padding:14px 16px;border-radius:16px;border:1px solid var(--line-soft);text-decoration:none;color:var(--ink);height:100%}
+.toc a:hover{background:linear-gradient(165deg,#001AFF,#002CAE 55%,#001450);color:#fff;border-color:transparent}
+.toc a:hover span,.toc a:hover .n{color:rgba(255,255,255,.85)}
+.toc .n{font-size:2rem;color:var(--link);display:block;margin-bottom:4px}
+.toc b{display:block;line-height:1.25}
+.toc span{font-size:.87rem;color:var(--muted);line-height:1.4;display:block;margin-top:3px}
+.toc .ok{width:18px;height:18px;color:var(--ok);visibility:hidden}
+.toc a.seen .ok{visibility:visible}
+.sheet h2.plain{border-top:0;padding-top:0;margin-top:0}
+.sheet h2.section-title{font-family:var(--display);font-stretch:64%;text-transform:uppercase;font-size:2rem;font-weight:700;line-height:1}
+</style>
+</head>
+<body>
+<!-- definições compartilhadas pelos desenhos -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="lcTask" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FCFCFC"/><stop offset="1" stop-color="#D3D3D3"/></linearGradient>
+    <radialGradient id="lcBlue" cx=".42" cy=".38" r=".7"><stop offset="0" stop-color="#4A78E0"/><stop offset="1" stop-color="#173E96"/></radialGradient>
+    <marker id="lcArrow" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="#1d1d1d"/></marker>
+    <marker id="tArrow" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path class="arrow-ink" d="M0 0L10 5L0 10z"/></marker>
+    <marker id="tArrowAcc" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="arrow-acc" d="M0 0L10 5L0 10z"/></marker>
+  </defs>
+</svg>
+
+<header class="topbar">
+  <button class="menu-btn" id="menuBtn" aria-label="Abrir sumário" aria-controls="index" aria-expanded="false">
+    <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+  </button>
+  <a class="logo-link" href="#/" aria-label="Empresa JR ADM UFBA, voltar à capa">
+    <img class="logo logo-dark" alt="Empresa JR ADM UFBA" src="data:image/png;base64,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">
+    <img class="logo logo-light" alt="Empresa JR ADM UFBA" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAABiCAYAAAA2oZrqAAB6WElEQVR42ux9eXxcV3X/99x733uzaSTZGnmTY8XOQkZZCQkxJPEACSYJEJbIbC2EpbRla2lLN6AeQ0uBUqAt0JJf2ctmQQIkIQkEUFYHEmeXsjh25N3WSJY0muVt957fH+9psyVb8pKE4JPP+0TyaN67795zzz3r9xCO03E6TsfpcKnIQF83MDIKoBfo7wHu+g5FH/IMXyKgrY3RfC6Q6wAas8DQRgAloLv7OfmadHylj9NxOk6zE4pFoD8HeA7QkwfKWaC1AyhAoHudwOgiwmt2a3yVjSwvgcq2QTYuBQQBTBDCICzvgKndD3/wo4TOToEtlwg07GYUYFAsMla/m9G2cuL+vR3PCTF1XFAep+N0nA5CDOR7gGwZ6OgFlu4Q6MlHcqOr06RetZFFwxYYzwBcAmo51H71JgKABa/8Tso0JsZlDHsOZebtC/q+ebWXOvfTjMQwKJ0DHAehvwM64yI8o3nK/VHoZqAr0lafRW3zuKA8TsfpOM2sPW5eAdyymtDZJQDAViNaGoD6W6Gg4bTszqCeOBusVgjWSzVoCZE+gUGOBC0xIJvADAhmsCTmsiEeIENlErSbGdsFsI2F6elPjjyZFsk6YAGlVmg/AVdZCoXbIm0zt5aRLgB9hWdcdB0XlMfpOB2nqQJyggR68uT0DWjv3vdR6hWfZZlqbLEDeZZUdBEZUWDgJCZuETLhkHTAHAKsI/ck6+lFDgmAov8TSXDogo1fAdM+Iv0og38tyL4jFOFjvhKj3kgJmocQGkehe63GeV2M8/KR2V98ZkTYcUF5nI7TcQJQBAoA0AcU2gUAJLa2GKdiI+1yymf5CmnE6zWoIKR1IgnFYENgDWYNGDYgaIAIbCiWLuJAS54YYI4/Z4AYYAWSRCQjASokOPQ0G9NLxLcyyWtLlRPuSZQfC93730foXC/Q0cm4scug2gX0dh0XlMfpOB2nY0jMQFcXsKEMfGGHQBFAsciZ167lVHDiCsC8nYneIqQ6GcJimJBYBwZEBsyRICSmWJQcrjxhABwFyZlBggEjSToEEszaJ9bh/ZD0LQP549qo3Fm/7W2RO6BrjUHbBYyVfwV0rTkuKI/TcTpOR5k61wOrs8C7VxPWrBGJ0TO1qgRINpxwDgn51wBdSVYiAx0w6wAADEAEAj0DsoPBbCIpRYKkDQhJxq8NEPjbga/+wytt31Z76GORhtm2Q6OxPJ374LigPE7H6TgdAeU7gY5OiY5eTg+0mfTTYjnYfBLCfgNJO8HaQ+x0FMA0ZvQzqvnCAIZJWgLCIdb1IRj9v4Lp30acbaX62fH4+nMGpdxR1y6PC8rjdJz+cImSq9dyQi9ulI79IQF8hKxUAwd1AzYc+RiJZrbZp73lsZQpsYluGMIikrYwQW0nkfhE/3l9/2vvajb+0CKJclbDc4DuwlETcfI4rxyn4/QHZm4DQKmXMme8g5ONZ71cWPJH0kq/CSa0oT0DggCROKjQE4pAYuoFopmrcY6aYkcgEmBmmMAIaWVJ2K9Jbk9dkhhJPSAStV3+OY8JfPNqoO3zwOr3HJVgz3FBeZyO0x8StReAJefJxLxTTbr1rIuFlfgNkcxB+xowAiTELLRCw2yGiU0d8cVsagCHBLKfEUuVxgSmiQSmlVrG0H9keaYqH7Pu8be9mLD6PRLoYXS0Ar29R/Q4cZxzjtNx+gMi7QGlXpINSyBUuklIBzC+D7A6tIBkhpBgxk6SidP23vDOlqxZuDiVO3EJp+a1CIPXM3MY3Yb5GXojASLJQU0TIyGszBeT2dSP2lavb84MPKSBXgnkJzTp44LyOB2n43RI8uLIcOgBgcuIAstztiw9zf45V27kp266zO9rL/hhaj6M0MGxtr1n1jCFBLTgoKbJzrzRV9U70qkTT2/wL9RAh0SudETRcBWfFM/kGx3sxAIK3UCuBLTtiIrigajOdEcbUModVQftAVQoALkc0LZy6rNnk3Yw9tlIFighuio+ECaAHCJ0lHFUlUl0yl9FIACtOWBoOeAtBbpxZO9YKADOiug9xsZR9YFttwK7b5j+xm3vZZxyNrDYBUo9gLf5CGtrnys8dTBaC7RlIwSb1t6J9QqTgKoDygUydrR+pTywfQPQCwDrjuG7rAXQAaBz0r91Aeg5ys81gDB0uLEXDuv02BMT8tW307Cg8GzJyZgPCATJfkWTSuSNMd3JgN+CxPAvR1tLCv25EJ3rDysiLvbjtmN8zUKidxcIHb0CjWWBclainJVoLAt09Ap0F46RhOSIQbu7CR0dBz579pp39F2vTcIrK1iuQpi0sDtp4dIVAvk8YyxyBzByqxiLX6Mwss+C7pdYuVSgG4T2bqC9GF2zmbMD5rCbsHJp9A5OVsL0R+NY/Bpr0gvHVzsDRcKCcy2YfgWvLR5HNyG3Fsitjfxahy/BjvU1RyoC+S8Dbe8GsI6w468IJ5WnrhdgIUxasFwFrxzPyT0CvUUC1hEKncD7isDVxWOQs7eOgM793rEzeu5zjeI0xzkeVnwMrgO0Sw5dLQjzWdg/S1bUHzU8viREKSfRAwDrD4uRkV7xIJgNmAgMRAGvozmfTNDiMQSb3kTId/JMUajU0vuBk/qATA1oKgOeHY3Q8YByA1BNQT/yJLw9/3gMBCXIefHnWSwaBGWXAK4TfZTwYMiF1oygn4FffOTAr5/7VdjLfZBtIKUFVAHUAPI1YBSQAsgCpMOwKk6Ur8sMXyehQw0jBZBOgdx5MEMLoUvD8JfepNANg87LDTpTQGfHrDIvkiuuBLW3A6oZ1LgUXAPg6+iqlSDIhyQP9rwXACD4gy40Ayw0kHWATAjpDsIMpVHZ8GFCYZ1Ed1HjvMsZ1fQsI4gMp207ID0Ipw6YY6BlEMOkdoOdffCX/SSqLjmkgMwBZQ/YURbozJMyWgtmqAELSJeiOdIqWjMZAiIELAmkAVRzCIOnYThEeLEv0A2BAgwAc7SEZbatE1q+FCxaYcRp4/tQJ5+EsQYRZjcA3d86QqupCAAqbWXDjN34WrKzPzX+aAiQms1OhlDEWm/3tD7be+qcfd7mFxKKoNTOB01614MXEfOtEMIGG56WYY9m9lDkBmUwDIgZTGJKMjyzgZBERGSMfnd9VH29crsjkYdGB+akWRI616Ox7iHhc9o3dUVW+pjozhzYNNSMurX9cT9IXBRrPi8bFzQA0JCWcDQ1UKNYYcCOAC9jYgHQXhCNkKnvCgaf3jP8288RCgVGoXB0TvRz70Mi0w8nM9TskHsCmHKGTasAeQTa4StdH3KHN9t2U9VPNsbW0JrxZ9uPNMHvS1rzFjunSM1LQbwAoIUEpAm8BCAYw80sOEug8WOYDBtDVCLQIAibicwTipL377r+LYOJ037G7mOvjcq01ncadPUwen90yPed/6qvgw2WKilOAOmFILHAAAuJaRHB2CBuNTCKIJmY2JCRZKgsBErMtIuATWzEoy0Nycd37yHfC7ehtno0gr7qWmOA9RyZhTSjuW0t2oZg9wmU6+xK64p/zPzgwvJ4wLm55tRO0V41Vpa7i9OPK98F9PYKdObJ6R/VYlkW9W9dRS1Xfn0RheJMCD4JTFkClsBwmgWFTNhBBi5g9jDT00T0ROn8rf2pJxsNGIAPcBNQ/9qHj1RwIWU1ooHnw6omktX0kL3/Ptz34iW17Oa9oR4NULWcCR78vRKUzMwUHkVDW0FIImGBhASHPlj7DBJ6PEmeYUBEIGGY/bfUy05XZaEjAei5zKECIA2RZuX/zBKJl4P9CvPRTRsiQkApkc3VvL8fXbrsM0EJCu19ExPWnACGXIsdFZCDv5Uq9THyqz6EsgkAWEdnBpLDiXn5lyZf97ne+tkVAawyRzSwOBLmiEfhNnpWZqd1B8HqYDZaCCWjpQ1DGxnVYokPVwR9MXZ8T4ZFEcJm09KCFtJ8PUnrRDAbklIABBIR/wmjp7USFMmoyFUHYKMRsFvNXf6N+wC6Lr3i2z+qp5bvrK2DAH5E6IaJTPHiTNYBEwCh8BVS9qtZB5qklJLk+DjYhFMWV0amSqS9mBAwAQDNpWpll2igXzag+Set3fNu6Q/3uLXo9oRCN6Mwo9lJUC43XvG9JlS9DYroZAbXcVQDhxGwAmmRbq2/6g3loHQd4Cp4mXDaNe7pAXo7BYrrkP7dgFaZxHJ7oLKm4dXfuAJM54PIJmHF8zAR/GUTApIBo8EmBIO91vtO6DWGfiuY7gy1uV1UsZ1O/gJqm0YmNNe5UF830F5QSjqhkfpdnl39vIJlAz5POo249d4tO0BYU1WJh6bhwec2MQxJSxjtb1QUvt2wUUfOAoY5dBYapVuIwxPh41QQziUhO0g6irUfLSCxjJLnSRKsrycb9F647u2VREKip6QPsp8ODOYYAcAoh1QSHNSSJOho51dakDZIeycIywMKtxn05yY+3TIEnLvYmN0WYI8siqCYSIA1TxICWjiZJuO7VznZZZ+o4yqg5wi1yZ4uoKNTKg3duNN+DYTqYKMB4knPFoCQEIZskTSAiQM8kyVl0gBGESsIAQabgNkEGiSYUZ/MMAeoYUxgQADMAgQikmmS1sUgsYrC2t9n+p+4xtnZ+3k3tWKk3r1ZIJ8z6JjZIS0EAyAJEMAaHGoTez94pjGAxo0YipKNBQkhl0jpXG3C4O3VlPdoBulPqLN/82PfAtzC7QL9OTOTY1w4NXBYJ7ashBCWgA6S0yLJHBkFws7CeCMLZdAIjDYTVH3agxAdvTK9rFdnHlrQyuR8BBDvEnZqHpuAWYcEGHAYGIAn5mnyXMUVKgThEKlzpG2fBeDPpDf6KEhcCr10DzAy94O7UAC6u8k68QWhxGKQUFcJlWg0flWDJu1BZi2c7Ckc1F6N8vaHMH95FFj6faIoF71S07sfG7nlnyi55u9ZNLZEn7lOhJruOXPyGrKiR6EjmatYw6mPZEQidRpz9Y+ZxRphpxZw4BqQAYw2pJwMG/1/Tn10NY14j432luI140P6WMWEp5LHUgWiEqGjejGDNQxDIF2NntxamiQo/5LQ1WlQDwEOMzzhJB7zN0TMG3oAwrdn6pxM3f0Fg651dNiBhkIB6O0iq3yPdlwCMf0xCQsAwgOCBWxAzG3keEBHL+8vKDG+n8Zyx4giRmcVmTQkIy2AaMoVCY/o78YECRvm0DUcVDWEWkBOwz9JW92e1vrczEWLDTpyh0h1YBAZHtdeKQb9i8ahQCQPEFpMYkKtJAKY2WhjgmoIDiBU4gxSyR85i5++PpvdvKChZ7GJHOOl6U/jMSwD1hFPHXV+Grs0QMwwsdkdJie5JItR9gQgM56nUyifAz91G1mZvwGJJhNUQg49EztQOUbAITAJMCgSkuNrFUODMbMODAfVAMYHSaVRq1VMCgDWzt1l5awAikWSdgsUJ0+CCV9u/AoDLPbbP+CgBjb+VZIZ6Fpj0Fg+JuAPx1hYkjY1oFikej4hqksq0bViUFS5SVbt5ByuhKzZjqwlpaxVFqpygy1HlrdW9tx89X2jQ+JDRohzTVD9DAg+CVtExqGnpVBLpZ36ZuOCxmRy5QsMUCAUuucS9dZjQuHAyCIf6X/MkQyZ6cB9NQPrCOXtICH0tDoPQbAODUlnhe9Wr1K1fUChKFHtP8xVy0VMGgKWMWcwzBUc1hEJtymbnmIEqAQcL/q3xvJMISGaiUFAkkhaYvIFUhRrkxqgMAaaioQsCQGtmf1qKFXqTEH4VSKDVRkxpNFaEuPCYM6+cjYAMSlHkpWMLmkJkBTR8zmMhayI/VbEoWdY+6GwG14Nx7o1WVPLG3YPaUQnMmZKCZk0H/vxFEeO9iO9ZkxFKUYpVq0lkaFh7fjheZDOTZDWC9ivhDAa44fGOMIsAUJFa2MlJVkJGa2TiqpVGCY6RGONnSywCR73MpmKe5qRuGADx4COs6d8B9CTJ9G6BFDhZaQSDpj5gPkiFswaDHFyomHxmYlL/pqxcqlAH37vSM5bhlgQRFcVRm5rMBYN6ES9fuir5upUtaadvZs1utYYlHopthrY/9pVhM41orYkLQdveHp33Xh/LxCsMiZ4hFRCAiCj3ZCs5Plevf4lu8kCiusIjnfIhHQx2Qk/k4q7/waf+6WEkA6EtM24ej0S5yliLYAbCCiynR4GGIno8DZ0oNrGDJIgVm+WDW2w5K4QpV5CYa5aZRFAB9ANYTcuh2G8i6yUFQmsgzhFSq2xyZ6f2+OM8cG6bHSw3ZjgaWP8PmOCp5l1CWwCslOSrKSCkCIWADx2OIBIcVjTRKpRyERXqspnJbakDQAx9zxHZhKWIKGMCd3HEXj3cVh/0HCwBSbcR9IiYaUVaEx4jzEASYAlB5WQLOd0MF2fSpnW5NKLoxN5rhkGpGhcSB/JpZIAE8GKrdR0rFkWVgHdEIkHTzaJEV4klPihEGIBh24IoknaOxuQJGFlFEgaNsFeNv5mDuoPmMB72JjgaTZ6Bxtdi56ZtkjZAgQBDiBg3aorTYeTIjNxyHX0snItQPPrccBmnGShMIfCSqZNaC4RTScB3RDo6/m9E5T2aGLKAe/0J6FHR+3MPtmYdN1DX1690a5xUy5wktmVH+OUr8JU45Ohs73FgAjoWM9woFEEKpn5clRav3OF93KE7m1kJQUYxEFdC2G/y6by1enHFhlkyzLa03xwH+VBbDhiNi5C//Eo+ny4rncRhno4R8QPGcVAT55isygSWGCkWz/NTU0LE1XmxcQaM6QWyFjru9ySOEtR+qGgWCR098zN7MnngO6SSFw4P0yEzgKW8rVREGNafYzADCYsQX8OKL6Nke+ZrVzSpBKSjXe9Cc1HpfGGvJTrmzoLmU1rq2bNB4tFoV9ZLkAvBuh1wkou4dDXYEPjG5qEZBMEQiVzWuOL7rY9l6o91TDs7j5outX+4hpkCaPD7Uz6zwe4dmsiaXvumXtEc8+iBlW3W43xThPGezUgryIr2cyhqzFRtUEAKQ7qIdmZPAvxBbuF3lbfDqBtO7ByfZQXfaioKUmC0dvA4T3GwCJBh5dlQeCwXneEoQcgCVjebDBUjzSDsgcU18K+ez2Enfy0UM6JJqhGQnJygEElBWuvpIPR/0dsugPQk0oO7nMblo5WfCWbMZSRZaQsJRaHun4SMZ8HFheB6IWswxq84HpjLKDrtWbWPDFG/TmgtSQS23LG8ZyTIMPTI8zHSTxIksZzFdkQjIYQ4ooazf8PNVALw0e7KDL51/3eCcyx9yc/bVqrLa9BQvwLG+NF4BqH4CKHhZturjhoHrCAkgzQy7vkrd4r/+sB/8HvsXv2WwWqXQa5EqqlnExV3YG6Nm9ICP96Us5LWHshOAAJ+ldrxHQ7EH1eb0cUpOyeq6BkMEmLoP0tXtY7Z6TVd+A5RxZlXrxbW/eUgYacRmksmBNVIFjpS6GSdzNRg5k4WGl64WMlJUK8x2o48YP17n0C6DCRwJ2lz6a8AujMkdgCcDh6mbDt5Ry4IWi6+YhdpJqy42Pu7ZijE9sMBin9xMCZe4Xz63MM9i4AtQzCa903guTAFvTzXWZf7jtuC/9dC2p/I5TztzCUggkZNL5xLBPUtLCShdZ0+7u8oceuGelcL7Bhuwb6Adw2G+ECJvrzWrl+I+Q+5WbyEj3zUDXBiBhJj7h3XPlU6qIv/iyRyX1C+rV/E1bizaz9ycIyOqz8iiblvNVZ2NeVfskvf1JdMjy7KCzDkLKl5vrtgZB/PJJKygbP00k994wRZo7D/AwkLADQaI59lNmyTDxxk3bk6DmA9UYT1IGpZXqGlC04qP/MGOvPXDe5u3LbGkq89Frm1hPgnXypANZx9VcrR5QxI5Qq7QYGNoqK+qGSFqx56kzWdGppXuOA9dDi6M3mwhMAsPl+oLSaROUxQCRfKlQqF2m8MQ8yNGAqABpjpUWy9sDMF7VUh1eUk6knAY4Qcnb8/snJuOUtSSoDoBahUqeyCczssyMIIAkpBFiHQOgZ20r9JlHz/kk9/aO7Kyf2CoRZA2eHrpXKKi0W7NMs3y0dfQdItbDWAVnJhTbjUzoM3+oV1xE2XMAzBSgPGaY3YA7UKDC/GuDepw32DB7exKgQuOZmCgoF4ObPH8j4khDWG4hTLOigZgwRjAZDvdquOZ9KBPN3u3cNRtHg2QCEFBnYsB3oWmrUqp+BUH0XjB6LOs+svgj2hVM/vOwIFjKouUBPnrzbXxs95QlE/hEA2AWB+8sGWFurnvPLdQ2Ld9wFkj+GkNko+k4Tvj42AMyfn+QNfWPTLgrKO/6K0HwPY2hW6RmP+9ps4JEs8PCgwZkwSLXBv2clobiOIB8UtQJMrfjhnenzP/WWVMvCp4RKfIzDGHprir+RQJLe78zf8xO9tabdigbQB6B9Fo5xokBGcmvUcTDa9cdHbwPGviax5yEgtfAyoZJpE1Qm8gSZDamEMIHbXUJlTUI4ntvqSBTWkVuAQXEtQ/UY4Cr4d3SQj3iduiGwAcZZnDQyddLDut7wMG68lIJ8D+ZeIMRAz+eBHWuMLHwKSIvOOOhFIDIkbWFC934wPySs9Hs4qJuoCxeMUAnLGP+NqiX1r35nl0C5Q/9eCsqxEmHPASHQHPpg1mb2WBpxokbUkkKCiKRMvoIpXJUojfwt0fwvjLYPCnh5g3BJWK0/akmn8XFlj/4zpP1FNqHksG4g1VsSqFyHxxZ2jUYmuJ5OSTukoBQMggyBnh7CjV1HmlbPM/nVDBGCZpGGrxfG0UyaOljmsUgxa1+TSrYLhK8RbvM16FxA2JCd5RC6gZUFkUh1G8cbuhhCXsA6QJzRP/Gc/Y4LAItkpnwoh+4MpBklADf3MppvZQxdEvVK7skzcr3RA5pWAcOgunjawp6mW7ML6h+Hsv6DteFJvkJi7RsI6+ztC1YWxKj5JTq7BDZk9UEFJcamjspJHvLCageAtzMe7olcH4VuRneeke81+EkfgKKoLjtJCM/7eFIHK8hKvoWD2kTKSjQOgMSFNkyHh3oPekcEMoMGlfbZ6gPHhnq6kAi0rm26ltKXf/2VbALEFRuxOwnExgeYP56qzvdqcpPCQHOIU7NAd1uENdBVmJi4fA/QnWeg16Ad8PrqwK5HBIprAQmD7o65j7G9G+j7K0rkme1Mbgkxv5RNGKchsSaVEDDBzzjkOwG8Z6rrQoBZv0JmRv4VHTsZI1lgZfH3LwK+n+s8TrYQs08jG+cgGW9X5rCuQZKkSn8+WYLH6PhKpf0qgeG7DR59b+i/5AbYIvy6CPUHSVor2AQhQQhm+lhDjW4MR9O1em8HId/D+ytdhxyUGcsr6+hgXHLJ0a3JnJKhAgTaVwRyDjxUCMBk3wURYGCAd6kGJ2qU3padBZQSAz05AOtgp/pBhLcJ5VhRpnUcjd3fRxIjRgmSTfb8PTjsEuNyHDEfuiv6fu/pkYr/lWJUTTJcAJq3MDa+N6xvfEzsTae+bEL3XpK2GGu7FI/RkHRAROf7asuYdJgdUxmWwAIIyk3yD1NUIdUdj+XBduCCNgMA/oiHQPuf5qDmR+gszJP8toZIJIwxF0MqoACBw9S4jx6tBXq7iOrL0V74hgOifJwXO17SRtIhaL4fDe6DevdGoHutRl8P8H9/Fc1B98umBp17T4//vQj0FceCRQbd3SYKch8GLwz3AYV1UthnQhr9apJWE4wec2tJDuoQxjxiW/7vOHR3k7RkVGECwdoDQbzIGRWnJra2GDSWxZSc5D9coqg8xxCMD5D1Kac0fFrinmsNHv2lwLnXs7ukLn2oUQb/kFQiYgnthcJOnxlq+88s9oDOLoHyLTNFvQ9BTnRTXHjhsVAB4j1cggikYUZ44CY3ITPXxhU9YmLtQ5A8L5EeviTxqusYS3fIiQDRTEGcHqCrgxIbzjR2f2UxYDpN6E74r0iA2VQPxNKjqDqIGKlTX3vM1hlDy4H8jYzOPCWHqloI/L8o/XGi7BEMARNCIzxPhF6UU3fIFCkefz3p1BkHreUvAkuzwFOe9m7bIcKKfBjEv44YS+hJETpDygGTeAEzgNFFzz5oQz6eoKVLMNjgZIgpccD5HOXiD4R79lS8pz4fWS2luYC6FuOD5WWH2VO6AAy/k9C9VqvMPjDJV0DEa8zEJCxi4+9C6G3QWtaYeCOEmrB0mENhpRpJ0EvE7gVRYHTziuNickKHEsw6JJVolJB/adUHgc48oe5Gtl25CTC40/hVAKTAENA+mPiD0io1JnY+qLHjrw/Iz3728SjzvQDWEXID8GE7TNwcmboU+9ZsgPAIwP+PVAoAhXEScEgyIZj4TVbDYJQIvnnFQRRXjvwinV1CVATIVn9MKtkcneQR0iiYQQY/YsCbsL45yqMk2Cy4wfCqWKqtPTbCMrsn+skYaNgbTVAzUW7neKpInABPJyKsA+0FxtCWOfLSIbwHY87swiqhhQBDPBRNxeSUrSiTiQwvQbUV2Lhbo1J7lpmpEyiuo1DkkeTyEiZjT8cPTCAOBWTmDc88JljbCgBFck75D7bTI4tA4SoOXQAmyukkCWbaaKTdz4YgoH4WL/1EnrPRAPAW6dqRNXWI1JY/QJIcumDQ6x1bLk6U+zV6ewW6Oo0Z3A5L06NMpj86gAisQy1Uqt127HdaLOL87Kn5wc++oOzojYLVrQOQMkgKYWWigvoJm4aZlJH0XQ7rQexXZYAl6zrA5o1WBW2Je84wuGU1zZimke8BdiwltSuta+5ei8BrJtBHIpOMhLqPyfyASCQmK5XMDGIkAjYtETghx2brMaAdZaCrl1H2QCbcBeI+EioO78baNBgQtLDiJNURQKAdnJZmgVyJKeuAjHmEjT+1oT2bKG0KsFFvArCW4a1+lrXKLqC4lpXuQU3buwjC3880JnAIAAvhtDepRfFmaD73GRSUK4HOPMklGQhlrxQi0QpjxtrAGggFCHVdMLQY1ZGlMJ7u5tD1x6GEiIhNCCJxrsoMn+DkNzJ2LCW09x0Xj5Ndc8YYIe0cOWq5SDRFMib/Fa4/8gGqlvq2E/PwBEoaEViDid6ecBZlEuKiEKUiTa4feA4IyniorQYQig88GQ1AMi0M7mXD95C0MV7BYowRKtmspPVWp0qxfyE7/ekaa5OykkbLQueVJNULo2guycjJLwEd/tjT+B2mK3VnGMFGUy5OOs/nj52gBIARF6RCftYaZY5VIUkNIjGjukLMDHqO+Mh6I1mot+9AS51GGexOmT8iwWFghLDOkEkU7HltwLnXKKRPOHzszznRxP1Vgw0Cvylyg0TlkSChjF+pC/budYefRHXDpVRqSm8B6E5SibEiAIIJNSlnnmX0ZdJ2gUK3RDV1XD5Ot2nJtPCCXOS/bgWAIgWVAAya5EaC4NAzJOxzRCb1MmkRUATB2f4cEpSTXkpy3TlQMBBIh+Wo9bq5Zjy6MvYlNgCLNzWEfcnk7qTGjqUHapXFYqS5dnUap3kYgvDOSBhyFGQSQnJYrSCUX084bE0FJI0fQ7AcbWWooRyliyw9tjkZBAKHamYpOaZh4hgJqbGWAdoDQHzA2RMLTyOIkao+R3hoHZDvZKT60Nf9To+Ax6IY1FRfA4MhBH8h3Vxub2jUAU56UqEPAuflgfd9+dhFkNsB3LNDJHb1ayfUCxl0QRxHpMjN5IDA9++98T09QUMdOPcalRxmDeB2ROX4E5ZW9PtFKr0P6C7oyb7o4zSZJldE56dqZ/tvciKwNu+R2TLQ00XI947zwuzgjsbKDjefCBR+M3uNRIZAujYrzDcGoJmWCSIwKGYI5jhlbzcMgwL1C0PBFiHt5awDE1XqeIak/UJ33ryXi521G8fTZSZTH4CV94iEHjRJp346s1rN2htDhdEkE4qD2rWsdL8MU8u02C93Oja9IXiByJR70ZMntB0jQZmPNCNuIYhQGrZCc+DhwXE606r45Y4RlXoJmaUAYTkJBQ5DAxpL3DZRkBFmGxrLkVbTc1eI0ixVYC0AC0A1NXueypWAdBVo3zqzMCsU4JZyMnXSWdpA/koJ62Imz2AsgkUQ0IERymk3CG5MSPU2Hl7xYAV/RGjvkmgtMTZcYNB2M5DdDPSWjp6mWc0DhV4hhpsMNQUvIeWcwIGr4xxJHc2quDt16T9yLXAVCrs1b3LBw9lfI6h/LNqvzJFm7IKNeVUyvbPVP2NDv/vIymnTWv7ATXBIklVwKTpEsQrAWrYafjANihYRmwCQamWitm+5nzVb3MbeCCVrNhqlGItq9OQVtp+gYuF66MtzFNK12cO1McBs0XQHozFRegcr3U/QP4aQU7VKIcGEd8qm0ci/19E7aSMx0JcHuiGszD4YiDcLK5kBI4y1U8Whq4nxLSYgUG4Ao0cnTKLJc2mYxw6NcvbYrO3SbLQvGx2EFuYDWMgcTkpxISYIENOujHd3iL7uoz+GsTSrXJ6l0dCsXwQhx7XIeByCQw+KxCNgALkSQ544y4WOmbSSUailZ89TpZxC+9ZDW0EdvWya2iDhX2vC+kgExjlpLYliU0vlYTt3pRYE/7b4ld9oaxiFTm44M/J1ryxL9JYEVmePnpaZzgHda7VyBAzo9VO2H5Fk7UMIcV2U2wqDJxYZvaCG0nlb72LwtknaMYE1C2XP1yLxcjG/FLmdsuXjsnFCOxQm9KrCxyYeuD/61+4CJc++mzPLBucT0DDFciQImDAkmcgZxqVieEecUXD/7ExvA2a7ZgEdvWGyeVeYtodmdyVLYarK2n76joM/YGRShj4FccBifyuP2G9cCG/+MhDrb3NYNxPJzxCsfUimV6aSIp+8JGOwsjyBrJLvAbo7yfHPCFXFbiSIN0WgniyiMk0HgL6HCb/WpBEKUWPw4CRH75gGJ4xRVgT1Nsk0PerO/my0QI02FMzJpNJjQp0mtEkBw7oPVgj0fYvQvPyo8hh68oCTlYv6A+2wOIeIXsVBHVFkduxwIsE6GA18vtmMzIuir15iVqc8wKHFGshUwmRycPY81bwzTPe2G+fO8zBjam5rCdhwgXHDBlmvtDxKjO8IlcKYxjZFWGrfECFBdvpvQltuTFD1C400cl7m/FsZXZ3GPu90g2ybRGtJoOcqoHDIdOCDHz6pHNLn3sjJ+s60YH4FxgNkEdgLs9kSatljMgIormWEzQiynkhtaTUgugnCmji8OQr8sOQ3yobhsQPi9zvx/OhpkpqUAyHkrzwl+nQNQLHI6OwSonEHAj91KoAc86Qc21i8AgZC0KVW1Y5S7+KMAnVwfjYQQGPSFa937l3mgDyG7R16mMRsGJbRtKM2suK2KPQ4Q/F+OQvsaCMSZQimRRA0tYKICETYrqWPyorLBAdDj9rl0Z9JK/G68WoR5pCsZIMJam+2GpL/VO+uCCAfwXCVt0cpQZtzWs4bfTUJ66Q4iCPArKP7i6+EbKAFgKBOhKTYb0PEZWXeEg79yCR1joFGWfwNsL0MwIOqWzDsv1VAj5W2ja2LgVBCCPGQkTbQuV5gw+f1XFOEZtzMG24BeldTrvaUvrAP8vZXh/8MaSUiAFQaw8w0QqWl4fDHAZZsdx++gJAHo7f5kJwBowESyx0KrlzgBilImNng6RMxm0Ba0PRI1bUf9oDpTc1iEcg/CvR2GP+MDZDW3o9JNhdLK3kmh/UwxgalMWEJNoaDiiahWoST+ksT1D6YnL/jruTlX/8GK/zCh94VbDsD9Y4OEVngPQb4DSJItTkG2jp6pahUNMS8VwC0iCO4NwCsyUooBLWbguRI2T2zJDDUZWJLjtgpwWi+VUjz/v1NRclYaYV+m6OCHd7SHeOm4h+4QinADM3m+97wEviLkxIv+YhGqZeQageAs8hO2xzUp7bAiJUuGH5Fxloy3z/jS4P1R95PyPfwwXyUgk0AkGxjK33tnFiCYaRyBLzyE0D/CyKhM8NJN2bCugmwCZumDTgbqhlmYNc10qWccSS+zyZ4XZyuEgGdah9gvFm5jZ9LBIvL7l2vowgjEEBXp7EKPwXYXB27qngMoMFo/wkv0DcbzsAWDGNJNgFYTj4yOIZWZCGOjUZZAHJ5oLsEFHIq07sntLU5F6ReG5dXiilRFO0BzBvApwHwY+f0PUcgoIuRqzPcAaxsk+hax5h/Ct/W4f0nycTlca2xmHDYSmlMUDPQXwpEMooQduPQ/jGCYOMDwrqQVMOFc9LOGFpaCWncfd9Dg/22KMPhAj3tMyOACnYfWUliwY4RKxx5Hci9XlrpDvarOnIhjPO+AAmw0Rx/JoVlXwQhLzZBbXeiJq5LVgf+x97560f8FxPqv71dAGs5EtI8S2HJESL50h2AkmCjLycrBY5q0CWYBHQAABv0aAPQXRIADHIloLXE5rElgOfeywLbSFonsA6j2nujQ7JTS0RQfaG03B3H1Hf++yMkQ1IppcP6T/0w84PaXZcSOrs0li+CXUuF1X3LVDrd9+YI38GIqdXKUY4yhGwKnLAgGpb8GJ1dAo+3anFIM4k1G380mNMVjAbG3QcYT9Y2fYqs5u9xJCj5EFqDCaY1/4WRQAkYajZaDKAUln8KHWwmYcVCLAb1VdbJSoavEe68yGfjbQaW7pCJy67jRGZwpQC9gkN3krmjQGzWc1Lsq/gLlJcJsdhK14h5N+jAaGmEph3vryAxt/UbQ7nPNwGv/V9g9XeAwnqg/R0AugmlVgHkVOahUmjtKzdKoi8JaSUnJcRH2Q7CEsz8GFfrdxmtIpO3egRCu/CbyNRuh8COsrJHdmkUAVrkfYlU8n1xsGESnwhNVgpg8+VwdN5Gt2GbxIbtZvaYtQSY0Bi/PEeeKgfGG4LRYTNyADo6GfmDmUMACt1cu7BXhItqTxPjEu2O/pSkLUnaEsw6TreJ4djHUOljhHm/ooVQC0kl38eU/K2j+r6RbdlyevrC5QbFdYTeDoF8zyzKZhHVj9+zkpyy1OQH89jgUmgvRpYHk1TCGL/fBEO/NjsXx2WVuciNsL3NeKZRBqnUThh+cKJKB+O5rAJ0haomoqKL3p4/YBlpQpKOMtrdoTT+0k+2RBkqpRxwUllI04CF6W0XkZAXs3anazcbFbKoJBjiRZQdBrYMCaBrNulBRIjik3O7SICZGlpWf3UhGnZjNkcvMzVO7vwwRhLkwwigo5e13yRTGcdjkl+HtAEaB+yL/DzGvENlhiIB8sAfEzp62c4MApBvIytJMZo4QEKasOZSEH7D12mgcJsJh1LoBTQY7pQ0JGIDYQNEi8BWVK4XzkFQkhTIAchDoWNx1Gvb26yAnEL71bHkXcuZ8mCYro6cqBLOTyDsC8ZdBJPD78ICEX3d1Ysr7sKaRNt2xtDhorxvHO+jbj+eNA3NLWEamdNb7j3hFpKJ90ewX5NxSDkk5SgO679OVcw/+UOt0TxvL8+1nE/MmZ8YFiLg94XsNER3aVx6cIFcuA0ATPXEITGyvWfPwM3veb0Jdafx3fvJSgiyEhGSfJSFbib5eiRISNYhc1DVADtCZa5myI2pbPjF5jsXNaRWdxl09B6iLcfYIekBxXUkoJEknCMsZ/m4VshADJTc47nLdru9ryC0bWf0FabcV6dDQNJNMaYzTbgyQjDTZc5gQyZxd2hwy9cI+c4/tNCNATgkK63YhLs48K6sLsj0uWcXBO671KC7QOo355j68GJldPjPIHWgz3qS+RpplTjTDhl2fzXAI1+eVQNvHj99Z31BRzm0qA4MYCCGyD+0nSXM0jEkkDErEyAwYRtAUZCjo5eNkjDwrzNhfQgk45QJCA5dENGlqcTA+dlz/pNRKMrs3YFJVWSOjYmCOGMpQVYSgsX361k87Z37mEBxLXu7nwBKvURkpjoAmJiEAJFIjGuUk/uzHEKDIjaulXGANQiTwT6dqo3qVKI9TFk7w6TaGKJYpJZLv74oubD8D2zZdwlhFyIklEnrw6xJWhKh93hQr/0/X8RgINkyZoVFOZlyY4L1RWRf8BlGN0R6dP7pSS/5Jdt27pYycQkH9bh0kuI0LQTCSioT+I+G2n/HPpVxa4+8ODrV5orFCJ47TwEabGBY74M3GgcCtx/apQAA3TD+IxkBFKkSPP2jtEsXsq6/0QTuDWxMTVhpBaFE3GJiol1m1GhNAoZMUNEAKWFn/kLZzp0ZjJ7VIIYP2pZj3OyOfY1WZghGyLfEFbM8cfgpgMSPtVSRJdS2Y0Kv2NEGdPRyOJwEmH9htB9OADozsQmZhFhK6ZFXCop91kuzfwjS0UTlzGwgBZGVViao3QPNF7sLvftHT+wR6Okz2HMycO41yvEEFqT7/pac1Es4dKc2bzvAjx6AmE5JspwvF5kodjkLhXLusP0qIclOg5QTpPxTgmDbuQTMRqkUwXTjJkYAz45+395m3DAr/RQeA5tfknTiE4UoBvWFsa3OxOIk8rm8SIklYKK3CivVAh2OJeYqDuqawd8PKvMjAQwCtswHumEMRTCEUwNbUW8p2r/twCHmjk0ABi60dfpDLfee8J6MZ1/VYOjlacFXpy3/Qw3OvM/l7mv/qbCoR1jJTxHRQg5ds99CGpAkBmBM8FeBSyNea0VGfrLDKKVMl4DiOrJXfpqT87PNrall37KgHiYr9X7ApOOsgrF2CRoQhqy0ZXz3DsBc6rfWd5Qv7BEodPPs1nU/wXE4rSBUQpKVBpHahxJHCcGzwh8tRv1z0GOAIteb87LvN1d7Felc59aaXxOSfrEOqv9iTLA11jLFuHIwGS0pFpjsV0Kh7NNhW7cmKnRRw9PNcVsOTO+Hz/cAt6ymxN6UdgbDDIheMqEVcgTI61c1c3BP6E/jefIcoLiWdeChv7ptm2C+i5Qz1meJANZCpQA4l8iGJZH5jU78XiWfE8U9tWiil87ki8euSQcnKUEqIUk6grXp57D6d6z4lRVnaHPlxH0Cv3qxQVc74cSczOQWBJl5pVczybUTrreD+dFDgHmFnzTzxKIzgeK6gzU9ZwYpYmMGiN1rmGFF3ehm8+LMCDzHkOmBe4hIqFcGnCxin42cbl8xWI1H8Us54IUPsLnrBSCr/r/Q/ppxU4QiJBAY/UeQ9LmR2tDehNufqKfb3xTnTBGYmJRDrN0NbnXeL+u3XUnIf1kj91mg9F5KnfxdI8jbNZE3yIiayhoAJge3GVgeGDzeCmDboU1ME0DIxJkQ8j+ietIQbLQR0hIQEiSsuGe0Bw7qOjb9JmuShkgC0hIc1P/GrQzeVLmzJpAPNDp6IxiwOZLI7ov6BS1MGydIfVI4jW817rCOUoCidrXjurRKSDZhYPzKZ9M1+sRAdtitnDgSBRsKt8WwZHPQJIUiY3SPDMx1DHIwS6RWEmS47iUh8AuUfeCmzjm0X4gFWL6TgW4NWkO1zvUS3a8zzlnXPmrPG/hYoiX8tKnhjYLxTgjnJaSkxWGdwdATSfZEICgO3ZBUogUwX0/3N7wkGMmV3O4nRQS/tt+jl2aBji4hyjnNdvJcwTiNtR81BmYYshyptXffwJadj6h0Buh689T36i4AhS4OzVaVbmwMOcTtRHLVBG9CGl0HOLxCDTc0Og+cNuLdsvqgbQ2eE5QtR4HchA82JIW0Ae0LxoEtZ6LtEMPeCQkYAxPW+2H0gwBf63ryRxz6g5XbdgoUIXBzm8E9ryKce41K7T4pSGT7X21k8ofExp4eb/ZAU56UI4zxlnDjyCZg7cFaQRCTlGQ43Osm3I+OnNEvkg82GFGVh9YYALB0AFIImw4BduuVgfIOQqIVEIkTDkyiBASLCVh1Q0BxLXPhO7ArQ3d6zS33CuWcF2thgnWoSSUWcuC+IYT5bzd9woVSyJUY9/dRCCEEQrrGVBojU2fDazVKZQDriLCSwbv0/vIuLi/PIhNGJu/qW2ZterP2DPQEei5ICNaBgfaZyTURYOlYW9kJUxsAkbQFgw3p+ofrdu2Lowvvlcjnomhv7/sPi0dVVSKr5oWoJeexoldwUIkOg2mc2zqs36WZ/863EneVCk9FjFhGFLyZa85eFIySQocbXcLHR1IpmRwd0EL7s9SEGbAA7eZwWCZ/b1dUD57vZGzYrtF2C7yHHhFeZ56CwVSF9NC36i/b/J2We5ZdTIY/SEK+loRUrP2pphpRJCzt9EmB737Grqt3ucW1UZ/4YnHqvKwoA62djEd+BOmpS0glMGbGT/CH+V1qSatfC55QWNoTRu81acvsWg68tdeE9zSBhb4VQf0fMFalE/spSVonKDs4S1bF7REie/65rVKOtX7etAikrZ1aV7YzkSHDmf3grYwh1IlRIhJPcGh6AHog9IPeoVvfuz1x5fdY8yiCefMk8ls0iv9K6FwvcQ9MAy8Lktmn/5hl8r8JnILRZhoen5FZBcwL4Dnd6OmiWVXmBGkP6IGqD4+qajB8iGtEVYMRVXP7VS3dJP32Q4Ddxmk2rD1AyP06oJvo4CUxEa0YbQByPVzDFjWKRXVG+P0pfs2xLuVSvt0ICxJ0NY0l6jIMSaU49J5IUP0Gk6lO+PnadgBYy2gsA/v7KCeGEwqNKJK2fQPQ1zdb0yJCbp6Moh51WBQA4q6AjCnmhXKIrJRg4z0JE6yuNSz44qi9QAJ5jY4jLKuz04CTRRYARf2rp67PGLwd+BNshxcOvXjHhqpjSxTXMvL5SGs67MRmBkAqFARU9qi62z8Lnoqv4RFV7RgR3oX34bABlMcE5o6/BnbcA+RzBhuy2v31FVRvdSSKwMDNV99WN+k3itC/1JjwcbKSErwfAABFUF5K0FUJp35mYtt1Bh29U0F0i0WgtQRr2w9MbbBHGR2+kbUXxScjvpCsAyhFP4HXCuTyjO0dB7aLfvJcQnEt6wag1Lrjd/tV6USBCaEgyL1KpYejDo2YXVjgWaPWEgCYcM/dqGz6yQ1eX/cJTWbhqdqmc4yQZxshz9aszwHorIHzti2v7KHzKkNn/lHVLP/Xyrz0zdVMZhuK68i1LRm8eI+IKvLOkUCR0pv69eLXXDPfWbjzv0kmvk1sktABz0FIjqUD5sbk06x65gAAOhBiMwy2z/bEyALVUlS2dTDq6wbaC0C1BGNnWcKZPhI1Zv20loCtALrXau+S78EGfZ/D+schVDM45LjiAgQ+l8HvBolVMHEuYtSeFODwh+XKoqFaa02ibbtGbwdwxgCwsktgt6UJNEQ01sqZJiJh4GYkdgPr2aB3HWH5Wp5Fi5hYSFOMEDMFhFdGmpwgCAGCJMRA4qxrT4LEV7jqfq2afXGl9oJzBfp7NEoAuo6s616Y9FHW8yXx8D6nau4hmTiVjT9RDz02PI2LGqp2onbXqW79l52Ek+9l9HbiyBCNKMpMBYDMwhAkNGoDswxCYbZteWZvkvfGAiXfw+ju00CR0JkXlY7HGA81dVujyQsswz8kK7F6ahCACKxDsjIN7Fdfb9UGH3Z78jQFHbsPQPttQu7LmKb0spVEdPKkJHMGKYIJdwZs3yeVArquNPbpG5nG/PH7CRavY6tIP7bQFaCfQ1gfgA4m0KXYwLBa5Yw0ZBLeooq74crndu13fNB6hQK8Td0EAOXe7/ipVf+8nZ3MuEcm1LuB4mepjtj3VgShp4tw9iZGT96gq5MQd6hJPvkvJnnZSVklvbeGrP5eWs4yDus6stjE3JiWCEx0wrgVNjuhN2ZGAPhO8SjO1lqgbx2hr1vj4o9BsGiY9hQknurI6isAq29hd+UmYT+6ZI9Tt68T0n4XB2OgDQwwJJH8AhgNzEFsw5PkwB0VBt/wkhxpk2PNoZq/DmwJBOZZmkFDkb93kgkQtdtuGd28z0Zptw8wUHk/YuymQ6UHEYlICJKIo0FswNqPjiIT+my4CtbbjOG7JdFNGa/h9v7+J0cqD3+UUETkE2ztAL5y+hHPuik3A+f3cv13p0PJ0kdNKAtSWMs4OnVpDHZKJBpeVrPq/+Dsk2vrhXUSIxeE6OyaRVvaWZCMWS/dCvz8A892NAHjAiXfySjfovFUBypDwyojecTW5u1G8AYhrYm0nki+UtTrxlwgRxXUpl06fPJrcRVaEejrAvp6hd1sGTL0WmEnlQnrIQAFhiZlSWb9W5m2TWgG5jVe8b2DqoD2xlPkaEINJam6QQIfmLSpJWvfkJRncqr2QmHL22PIQf17AZJRLEbN23J5rpV6Cf7wpA9TQKEIFNYZXP8nBjeqSDnZkIXdryHP+DLXX7BeNrruCbYO3wz47xAyfaoxAY9X7hEdJldoHhOR6tmdodgXs/hTXFuQTKZqnJYTFg4DpIxfYUNi6ADGxruBntXk7bkVTubF32CYd41jS0bYOgKEGASYKEIJSipj6j+sNQR99Y6HBThlcMvq6JbVOOLoG8CR05gtBBIUoBVGjZyDEATgywBKB/fJSUtA+7cZ8FegwxwJtwXMzCAPmvdIIepG8C4Ogs1Bg9mtpYRJ+9j79XdGvpaHyWD9eoM1nYfZemAaGskCxbXsd3ZJ10/vTAb6H6Hs7046GKJGZkGFQeofnWzltgwt+nUlN3OXuucNjfkxC0Ugh7BSGlEiq/qTXvJLEOrzUQUNTYmQMouzyPcbVT03EoIBdEVJ5t2dlHz5t8NktT/NtnkFczhRDRJbPgAKqFYecaRQYP/gtrIGnJpnBNjhsMb7+bSZhA3o+pUQ5nZ09DI2XPAcnujoVS15A1TPJoP5jqHREpDIxYHdSXs9A5i7FsDduDhKR7s3D6BXWCvaTHZ58kWZavXzIDpPWMkEs4YJqhokaOYUoFkqFCxaJ1yQzypFibEy8zKgogyNJYNP+LLABE8y+wfsy+1loGuN8e68htz63jsNzFjahJmiBU7kASrWbsjS/J8/GqcErdg8wfQqaozFUYYSH6CHg2EImTYvawnbmqX/J8qRY0KvL8P1pfP7/ns0CNZVKvoT1ar7mZpf/daoqa2vjjTcWRs9YXdt3xKMnrZLVEdbZTTkbo18J6N3zdETkgBQitd/wwpdtRPSr4bfYx1cQ1ZKTJo/ijafUCzl5yXpZmeUNKJG8XjeU3cxOgMLMGFFI5R8E4f1/fxcRGADAlqSyQZLJjom+HosydyywaJpBZjOiaLdk9BW2IBIzCOp2kmqNpJy6aEuIeQyIrXwwMgtETgEw1yi2ESgGtnycxckI4rsk+U6cKrZZQ311KUpaZ+bEokXpazGF6XsxhelZNML03bDxZlw3uvTCe8F6dNvj0/oNIC1bFJAIMo7SVpLhbQSHNZDhH6E/3fEso0gIFrG5IN4DkwW1LxBLNCeoggOC5PVFWIIFkbQ/oKptwvIvY/RuV6YajNA1rcmB3MmBBziCL4NNmaDPzrvNvfm1xO2t2mUJvlPlQs07GaIEIZ5d4QwNOZ0Z2KjAYNFIwvnp6Q4Z+wFZnVyMuAEFQ9Yn1f1AbZqFWPVRoVVNYOq6var2kLI2t2vIt80AP05g9VZja4exvovR+95rKjqAF29HGAIFNQ/zqG7Oer4x2NlfYJDTwuVPCtB9mdt1lEgy/FmV7r3+079kRuTqwD5agTA3kmAz5MO1Oh3sX+soCdPTBJQ6g0kE1FPkQOOUs0w4Zwu5pCncU+NtYh4QUJVX5K45HuMjl5xLOFKj4iy5SjjxHaRkIkrhJ35hTDyboKYuATuIZn4lXSarlWQN4oFd813zriDgXZCvofrL4B0a8ndMMFfM3PclpiOokybaLjw7ArKjt4omTM3CKCplZnnj6Hdj4k8BoXErHkMtWgy5l7ufUBXpzGZE2GTus74/i4IJQ7MzWOOEtfNV4ORhmiBdrRNBRS23HhGQgimepT4P+4C4CgIRoHwlRn3r816vo1BCUBvb4i9XgAggKoHCBIhnGyIp7I6CiYUgK+8H3jPq4A1p+NwfSuzpqE0kO839dZ7Za1ppJ/ZfIDZRHXPk/xfUYMz+z1JUX9dpnexQbYs0XMUAW2f60QAW0YwE+1nSdCUA3kcdL4/cm90dRrl2mDw6vh7PIUnoyo2c3gX66mReCIwQmGlbEBckmgYjKLffc/RxmNxhwDKlsGB57GuA4IsokmXEBZ0ILQ74JK0lycTi//eau6P9m/UI0hX7tgj3DB1LevwerKSIk6rOypCUjPvGVtT9awLSgBoHQS271d2xcQkJDH8Qe3TPoQusLKXsWHS3/V2AKtv4Xq2LC3UBhI18UNSyQ9zYPQ4OgyzIWVLDr1ev16+0WRqk4I4M54jkgiTXHFMYyjnaUkyHPdLlmb/rl4s6HfsA3Y8VwRMO9BRAsqr9ejKHQJ3JW9OOO5/Siv1IRPUw0lzGLVVJ/6SPUr3JXbu3eH2DkYBpuczdeSBNb3Agy1g9gXMASkZDAIxc0gqYOYeAGcCDbcBSyETzs06mRy6wBg6l3lyc7ao2yIpWx6J9GYTApNxZJgF6xAMvKbFxWcCudyr/qrzuZ18HmXiiHFcx/0TzgkEiIQJXDDw/kSy/P0wU7vf7RgQ6FtmUFwL/87vIim9j0LTy0AiAxg+GlqGEDQeG3l2BeVIFmgs4+CAr6TJIgPlRQpMZ3nqgb7iy0Brif17zoSFke8L1P+MwMmJEi/SgBQg3aX1smFvYX0iJWgy5fJRf+dUDqzDgJljUE+a8EWRWAAOUsR7AawjIPf736SkqwsovA8ovpv9S38MMVwrOo24kKT1wnFQDoJgE4RkpZYoXfsXW4l3uECUrtNRjPx5z0dqTgBYCyR+CDHiLxfKbopbkIjx45wkgfT2sEouuD/iycSXALTCahyACUVB2EkrhlRTMbAJgcNdOnCvF8Ri7rLFCENUl6BzQPLC8a6lMYwdAS8aocRpwrIfRHEdYcMFz10+pck/0MzJsWy0tJJJTe4n7YCuiPgvDdx1r3HDp5RTP/URZ573P0Il/8b4FXOkgZz96dkVlDFoL9MotCXnEbgJxkQCKk6mJUCYwAjelwOKZWD9fn7B1hKw/irj9naQdU73vcmFfbeLRMNqDt24CkZarINK6Ouv6TADdF06kRK0v6Ds6DR48hfA0M4dEBwAwopPpwkTzAQEDM1do3xOBy4KQL6HvSYjlZ0esnX4FyD5S9BYiSERQIrDmiHpvD2xQPyKLzDfHk0MKrQjPKAa5bm0DS/4MGPpyvhQWDNbUQScuzHKg9x4jVRtOcPkvgNCAtqflLsYozmZ4MGAatXAeRDIdTLKDyDRd75WC5IA6atg/Nh/hvHqpDD0rw1t70Mjw/0q2Z4Jx7LGDkVGNaK+4N0iNXyDST01UBBsbo3AiGMtilmTSkgE/HoN8SB68oR9Dz8P3B8kTegaIa3LneHkVZlHW39UIUj0dWtsWqv9l/wYmdrgp8OkeANFPbV4igvpMDRdYt42N0EZxn+2N3f4TvxsOYoEtk6CpRoD7fUSECZIQMCZ4k8hASZUNYdVXYlKF6ftsIi1AAA92gSzSHyI3JHL41pYZhYWiB/WI09sD/tKAC6dvvRtDLFc2iAyjANhtzlSb5OSc6PAJhyzBojPyrHesR7YvkFXl66UPPDgnRl56qdIpT7BQXWi1pkJMBqQ8l+T6fSdwQvnbXHTmwRWrZq7CT5ZxzlcntpeBsreTA3ACMsvYSxdGY09V9J435cjkImD9TvKloFyF9DVSXjvNSpjiSARjlwEId4y0ZBuwvolEjDAvcGIB6+lXaHSGKJvRMhFtkkwTgtBeTZ6wjqJtT7J9vW10QRQ6EcdlTlolSMA1qH2hbVUW9N1R65W3SqEXM6G9+vQSBeqmg3cfGUEGJPv5GMaGHxGzPToEiw+mdg9ektIe0fdTesI+RTXl7TK0d2lQcdKfULYzjdxRDlssS+aTAlOFjDuHJqL7VokMZCTiCTI3K9yVo5DUk2jfROJcKojlhkkAIPhoVv/tBxWmib8kjNMY1jZhdqw92TFxRcrlvUfFcv+z6qr/72846lfjvz2M+Tv/TvMXPrWC/R0EVEJkkge6OOIe9VQ7QRujffl80ZQxtpWeQfQtcb4FKA/dcOnWHt3kJWQ4+sS5Q1qktZidsQX7cAG1q5lbJ5LFJwBHu9TIo/oWpqNGoDtR9b8U6Mfzn2vTPm+bvDrOj0igdaSQDl7aD7t6BUorqP0roYgacJziMR3BMkEjDGTehcxSCrt1wYo0D8O0xHyFLwdQGGVEArQCK8QKpGE0XoCLUgSwnCPXwvvNeUlQHGtRt+y6VFzZrqaTjRYt44Si0iDcT2kPRFRj+EGmfgliYbBs5zz/ofRuV4g2/Z8OM8Fa1+TSryAGhf8rU0ygpVr3wpU79XlO9eRV9/zLaODXx55YIdgIB6PatI7eVYljFY1AeR36uSoZUQ9cRgnAQOOB73hTHDowBsT9p4TaZlaAuyloSwJM1aWFVX8QYJQLJL5ZsiHcnT4e4rw90CgMz8h5Fps4DcWAwWDg3m0ewGs7GX+bR6a9BCIPCKppii4AASEjbG2JK14flFvF5Dv5HD+eTIRLNOs/b8Am9shxETiPpHkoKaFSr7GeWL0A5kP3/Clys66RK6k0d4H9LUfWns1rJVhANDJMNTisDxoDJRd4KWLQP1VVDYByHcCvV0k21Zy40v/NiOqlR8y6Ekm81O7TL9VPYtroRgF3LH28TQxJmaYagb1W19LqeC7bCNosk39T1imPkJC5jj09wdU0EIllPH9b9dziafrJ79JIFk0uOHfycqrUDWeCYPgFXLKoSw0qYSCqd+k/eSwd+8qQq6H8c2r56b8rP48kM2TGC2BReJWsPmLqdoQQmFlEiaoXiwbljwEuIhylr/wvBCWJnRBhL9IZhf/0B/tf9S9IC1wY79B53rh9z+uLe1/lAgXg4RzWIGdqDKNSWAnjTQCWHco05shgIRdS5284HcnJUCGgfDwtGZPCohytf9X79iSXPA01/cysPuXQDpLSGwDS9UkVBLGD0NEqNbRmA0JdENgQbOZVU5YPhchbo+Bl24vA/kc0FvAQQXl9jbglrXML7kFZl69JLR2ISl94MlhOAo+xRsu4T2/hGVHJ7B9g3aXrpS0yX+gYZn3CVKpz3LoTWQSEASMD0j6dOKxXXeHKb7fbS0JeLY5pEnDBixks2PE8lavniFNhx0554wSMsEjtYy1FUEBCKpA53oh9vZqaL6YVPIyIa3LTFD/s1DTXrvCdyekuIfZ72EjB6Vin82kGmBrX6bh8q+dTIEoMNNlZKUWQft8gJBk1iRtpUN3uxG1z/uNWQDrgOYkUCySvCdgpfyTyfDLOaxjUlM2gtEwpO/S6QAorJNAPkT3HMtStztAby+bVUtBabpPh/5WKe1lUaAJAswCJgDBvFlp81/o6jRouwXPj3QuIrDRZKUadOB+0ma83i0CuLwD6M9ptxXS7lf3ykz560Il/9wEcwzsRMA5go3ebNdpX2X0YeCna1kdXM0NAGA52H/ITG7rOPeXY0goAMNtq7/2gn2PXbgPAGHEYqRvA+vFgNyv2oUER5iQZl8q0R7WckMS/v0aD7zwIM8pTtTszrXXVmzSc6kVummHkkJOfV8mBgliUkvhxWjrbTuef4Kya02kmXWtMXUw1XvwudwV31olVeIKM1Y7CyI2WgsrmTaa/93dFrxSlc8Iwt2LaRamEwh8GcO7BPoIMvyYDBmkNNHdI97gKpycD/HLrxCWnE8qsxgC8nIiCeOXXUA4JO0TSIgTAHozkQLCmq+N0RFuXzw8ZTsk0xFsGesYHxRifyEJoSQz1yn0/sRb6O10WzdFqVILBdCTJ9E6AB7EFcJK2hON2ZghlGTjD4HE7Yb3RL27+w6jGLu3BFzQZtzWBmm57h5HBw9A2MvGA01x8jlInm4nB09N5L/3hNu7SaD9eZLORSQ5qBsprdclkHwjv3Thj0fT8yT6ejRue7/xV90Ih6ufMJoup+gAmUNgJwrQMYdP1skM6t0CB0f6nTQqAiUJInH4FyUJwiLQvCBlK+HUY+MlTkuTIZinAxEmsKE6kAZKOYqgmY5tErZJuvHBMuPBkIYbux88B89L6u1C3F6YnFNuZfj8Ya29EgkpJ3xhsQlupwoLFjp/a/sySgQGgHT1kIx+ZPwkEgRKENkwoEbk8gKJeUCxSI4ThBnJKTa4IKqtJgtgsA4MB67m0As5GA3BxiKIKXwN4zMHlZBDV0fgFyQnNhgzmENSjgSzb9h/c60Rt1TahyfySUMFdPSyrCmQ4SunhK2ivGCwNo97QXqTe2tFoCdvDg8JaUIz1BUfAN08Ua4ba11GaxJOVgjxMtU4CBQgUO0BhvueX7wq5McSls4k9jym0fsBQv7L7LbWZHVvbg9YfyaqpJrDAUFiLDbysK8Ifmvawhnvn20Ol+GjcEX3qU7y5SsnwuBTDpjMCVFBzVQBxSQIWj5TgonZCTCczu4AUyVGVp5aisHsz+QjfU4EBo9axhwB+ZzxzhqS9ebWTQT+m6gDIPH45icSrF2wEP+Yah58kb07qVHolpSsPGM8RcwazUOMlhOBnjzJphPh60QbEc5i7ZtxWLsI/1PGfYDiUtn97xelQUUCMu7UOVYBQwpkpRTr4Cmj/dVupvVnFdMkx/to9+eAxrJwts431ig6SNA5Ez2axjQVCQh5Q0gCKK6Nou+Hm1a1YwPQ1cu6sguC8EsTet4Big8RIOWldmMC9rZkiFIXobbs+SEgxwI7MnE2UskP2iSiwA62Aj0pXdvYSf03bvsqG/8OUpMCkoeONCoO6yCY+7jcBCxvNkDn2MQKAEIjutd0zcLMUbsm0xhOr3JAMDJqUzLWJ8MYsIYgEwK1+AulYzrzACFo34smz9MAwviUjsZDbOKUwiWkY3M7/j8TAGEzgXSMW2ni8jITJ6ob5OPIT2f+mPKPv28TDAsTt76YMg6O3iXOT56F1tKRA8pZXclfLtwg9W0Y/d04mhhEjbjAMCYgEikY9SVfb0o6tDMUjfviGR2bj2PAUyAz1lMOALA30pTCLSFYmggVXlpEVsqCUHRg35VpywLNlM8giFRSRGAhYdmE1U9RUH9prc3prpz2aoFcPsILKBaBzSsis3v3AkhLnU8q2QhjfDDxWMc/1gFI4zfA/KjnD46AF3ZsBlBkXS+jP5XZSkLeFdWTI4jnBxzUmU242hHpZTKTieRA4nlkBREEaw8k5EcS6dYViSf2avSmBUo1oLNLOKe+1DD0P7IJwnH3x6HkJAnA6GHLU91mdGFUxadbJk6gqHlTBqSSkqzUsbgEqaREGhjjbTjexP+FI4VKAtISIClIWJKkDWbaCRkCuG3i74+xj84yBmQlBKlE1GqWpICwiKwUAFrAAFDqpTE0ay7lYIQrSVo2qQRIOoKUI0jaglQKgG0TtQK8lo9oc8yChu/5DAlp2WQlET1/bBxJCKmsYDQUZMb8Yl2H9ld6DlBcB58kdFD/CJuwTzhZm6QDUo4g5Vhg1padfXHrvPlfSFo12KIGtrUgaSuy0seGp1RSkpUGhExg+6MC/aNRatO9f0rB3oWPG1eeyKH/5xzUvstaP03SEqTsqCHVeNOy/e871sjMJlKOADBigvptrOt/rcnrqLeWP7r3JXsHam1bBNAd4YOOJbFvbwO6Oo2spcCMlxNJkFSSlC1IWiSstITx7wpppMfsemSize9hUzfQXuCwJaOy7qAGhz8nIUBCifhdJUmLhUqmNbur7MYTItdIcsnzyO6OXQzSboZwPmmPhRVyJaAnr70nLhHuzhPvBJv/I5WkAxS1aQM5NiDErypucrD+yAVRVkJvRxz1JgIH7kMc1hPEVOGjDZYRQf8oAoY1TH3cuFY67puxGGSCodAdepoiDaiZCUPGLQvAbDKjTcDiPKP6zFTCeFLBDt0HGayJoZjQAMMD2vgWQzxmhtxoPMOIkuAvuRahdGsyDB4IyfcAuBRVRzN7vg2gB7nWSGld23Gshs0A0PjC9zProMfo8slMXBsfh+87zGZjGqnQNWO+3rWz2I+3AfmccRu0FFse3t3Q+qIPGe2vA8HhiSQbDt0hQaBzlMIpIfOTqo4Ajvc7o/3dxHCPNk8RYExYT4JwH26aH2DhAxgDzHXPuxqhk9jJA8FX69++9JrGK77XZIf1diZ5miCsALAEZFJgeeJ+iD7bWdA+1nozET8e+rp3aAi7U9bCwGQY7rIHx97BALcBxZftHwxkqqTBWfn3oV/7pAQ1B3DbpFJbmLnmh1ziob6y+/DnCRhk9B5hFLq9AACh0HXY6fpXPM/+qWG2hPGWARJGoo88j1PS6w+aBgCkNbJ7geB5JSsFB3Umab3FWZj8TuLFLTe5J+Qkuns10MF+mIDy/LUW0eUkVGuEvDRDYCf2T7LhG8KUPyUrQQHQYWMbqn79/dAe4JaP0QsBgjmWmTGSSuT0N3rPYnA9+O/ckoe+NjiyoCl0EvOskAeF2lrddf3aurX6ZwC0PmRbiaNEbvMoytV5b1wwsjWhE22NrCuNCc/rp3l+bUdX2bNeNS8yJ3fmAYDDR54C23v3lbf/+5ULXvm51LgXzq9SGgiH+k92w/t3ADiLse7Yjj0cPQkiUfmr9JLwo8GIFhNejiz7xq6NpAQk7ogF62wGU4yqdnq6dK23i2rADQDfsPg165LaS0+p1N37kmo9cdPjRrlZ0NKXjAQkOlkcQ4Aqx4Mu1+G8IgXvV+eMBzn8LxXho53wsm6J4jpTv6N9yLeCIWqgB+A5U7cJT/Njah7YrkPv2w6ZHkFNnKJwa0Gj2TfjQC4H+Bajm4aVBxF6IzspXY0LEuRvmQD0A2zmI9y6YNLcHyEzxDX2Jn83hk/YVedU/SleIAEsfWzMVUUlA7fSCLn1BGDT+REg8fOLKHKNCSKpPumODvxK9fX5YelzhKUfYu8FF8rEnoFtxln4r1IlvoDxLggHapOQQnHo7pEG3aZxGDh9IitBoWsNvCLDAwR6ugi2faxfTOOJF45bD+gGPDBKALlvONGn9u392lj97mMh9OgpQHGdCLpXMbpe9ozNvJ/SQHsvD9+6siorpkpo3uVRCP1ECBQfFEH3PuDmD00Ip71ACBDweQzd/+Wq1Xh25Kb0HZR2nEfAujgy+upjPvbqphFUN0F4y15cF3Y2QosjAZ0KUD91jwSg0ffTObsjAAD5PGPNGgGsw74fv6ym6lHKHgAE8lfAL4rkjlULnHIJME0d6NHVoW3ggu0MwOBX+wmAb/YxOhGiKwe/u0+giCilazbszS5w0ppImBU/ycgtCNHeDnR1Yqw/y0xUf/Is4MmzCMV18R+ujQTi4tj6ABj4u6M6DeXelUAvJj3zrfEn64Alk5/7PKUYN5Ws1LmtJ57wocrAps+FhaLE5p4QXWtMcNEn0VwV/1NNuW+NOrZ603RjZCZhIQzcu9yG5r460hIjJ2m03xMLyjHq7zHItkVlbM9SwHb02rMIfBawbh3hf9dGCzsviPtHP4MjaS0B3auMd2chbmi0jmJmA+Y1zjQeBkD+wPvIP6BX1lUG+NEz+AKrTG1r4cAdHfbocY3ocGjNmsjs7MnDfeTi/e7/EgD/tJ+OhoNHGvtzQOXJ6OfMLqB1jm6JbDm6R2vpANfVFI24AIMNWaCtfPA67/H7tgEjtwA7GCgUgO4PAKU59PUpdDN68oyOMT9wHuhB3B6icGyWfMozx/AQnoHnPocCO9A+QPLDiXnLf6DL3g5ve4dAvt3UFp4qh3aNuA7UR9mYX0xveROBNRSZb7uVRuDFBcaG7cAtr5pkLzwniGOXWc9EnGG8rpuenfEAmALCccjxrEXUB6hzBgvhGR77jJbKsbh/V7x2czEn1yLqcUHA2WsZZ1PUYfG52r7g+UCR6a3SVjbM2I2vJTv7U+OPhhN9xg+67gyhiLXe7ml9tvfUOfu8zS8kFEGpnQ+a9K4HLyLmWyGEPdGrKjJrSdnChP5tAAqln79zDBtApn1PZ3z/T6Cca9gEBkfiy2bWZKVkGHjf8Kv+u0ZbGyX6qxqlGtBbEtkXtphka+qHcFJrxhuPRd8zpBxhOLjPgrdqqH5SrX7rywkFMKIGkdOVMPJhbCo+wg25Njr51xUBnD7pnsXDfD4dwcanqf/vne5veYbnrDvIvWc7r4eykOgYrsNsx0gzfLdz0prN5rnryFmYZG8PE5rWqbhyxBzeeI/FYTTd/Y/GOj5Ta/gc04WeERO8Dink21Mp+X9h0P/remurxOYhDQC+Bmyb/0mE7ishZBNYTwrsEEib/60M76zV7d0KudvDyTir00jv4qTZnZNbY6Jh+4e3A+sfnQOizDqa6J41WRAVKfpsTs+fw9+uxdR2b3N610MzbOE3402UDm98B1xz+27bdiD/6GGs4xw0us71QP7LiGqJJ49zhmfG2JWJV1yNpvP/llOnNzcufs01yYy9PEz1NBrnjqdn8dBipBnluyaeme+J5vvo1zNPN/dHso5z/d5+e2IWczO3Zx3BzEwSH97Ic8MAZzYklGQhP1G3bpOWO6iRywEn+8Y9pVX6IzufYPC/kXQwli9L0hJae1vNCH/PNyHQXdRI3zZlCtV0QkstOpnD3W8jLNrI2H3ojaKevh0yUCzrDswZAu7nzyGs6RLIlfQhQV3bC1D0Sjapa2B63hvD1ncDKJJY9M8sGj6FUP0C6J3ZSZle8RBgNMfaN2p9Bxlv++UAAoZ3MrC7SCh0sxIVcOMo00gDwosPMt5CEdbwjeDKfKbaQgS7DgF5110gFNeRc9NOIwabAJJgDbhbZv5Kqr0Hhry4R0/k4hNRyx5Ikhh9coYvXvafUHtvgQxsJi8NJD24p+yR6Oo0s9tlRViLfgbjbGLdt26W+IUM9PQAHb0SXfewtajRICMRbDqPcNJvGU9NNyergMJtQorXmWSufJrh8OuBodGU0lu41jhc3XbW38eHGM+soXcD3bcJFHuR/PV6I4I8qqtPFyiuA45ie4rUqQ+Mt5QXYIw2fBWW+2twtYnJn3fQ9Z930m/hM7EBoGPgbnZHwH4NQX9xBoHOsBduhbBdFk4NOjTwnj53TOjN6r0Si5JwdxOSy/6PKZFH7YljJJFUcoKneroIiVaAdZyN9mxrla4mK/XSXPXVH3BR+Y+gsU2h8liIrjXGX7UWyWDgPwy3vEko+0zWfgChhDDBZzxuGnWXni2x4981+v56ym3VuFYAwH76DiRVkq1Wr2Fg5zWuRcuC4MJYK9wfHToWJs7WQXgnQqbK5cZkKlDSF2bXmqeG7MZQ+60lge4ZFjh+plPbB6+6RzUrpIc6140m7ngRY2EK7h5CY8dXG4ead9ed8M2+1/G+A8cR30PWH0HS57TxR8nbF1YmmLC4/0kLp6EZ3nyVAUphw6LrXEhg9KKHRXZDW1P54ieH7dvPN/7+pvXYuz6egof7VFP7sszwTy4o2wueNv7eGczwQjeseXvYeqCdnYYHGuWS5pQuoyalHFEv/wIqbSOT7h3dI7vifiRXbITxkxnP2WEDWZDymUOXMnbarQqnhrP2W49i9F37qV/Cx+NOUjkNSarLMBB1tWdZOTjvDnj3XnQQ+Ri/2x0peL96QDRe0do4ct76sjW6Rwdr1k8o9tNqLt1Ab4GccI/2sJYSL7qmJaFDVTrpniFr0yIvwAwCobiWzYu/j3C+HjLAX5LRrSTkmwi406Tsg7hd4meiQM6FTxiv51cyO39Ba5Jv9a0NDw/7l54O/YgFbw8fodkZN5RK/wZ229MNNofasKjpUYkanrKaTrbTwz+5ekS19nHYv9+zYp4ktxcLw4qz1xcZKyEMAAhPmqFbd48ml5xn6jv5QHO+rQf+jg6ad9l3G5RVTxrPCG/exoFEtSPgJSPwLipOWbPpyFnch3kv+mrSJ0/CPDTKq76I+uLhQ35vTlNDTBzWaXx6OzoZvT8DDBmI50B0PQ7skMDfJpmuD8KtW9xNtkD+I8Zt7ZCKBqtOHWuJcR0J2+LAfcgeGv5mReaArlfHHRCmCspId86VAECqU86E1XRaQYQ03LrQ/hPZ+gQASPTMqFkIIQxyXvnEhJKPsuvcErB9Z65WebJpt/c+FAHLaY6YZ38zPEoel6RD5DInvNFy7K0L7126ylm8Fc7irVh0+f+eYDnO4wuq7e8XgY7GMX3CuWQiGKn/GanUp7k1fq/C/tpgrJy1MlqTybUt6aW3zs+OJOx5JbTcv3ShI8XDLRtWLJDVcsy9kzTYqAJHIEwhl1p2uuXzr+e98htLhO0fuBvjd3Xan0Rw5hMiE/KXldP6qKhbP1e2ukMJkTd9W6P7dU/RkimwhmBRMI/TlZsc1fS4o+R9Nifud1TTU4Gx/8kMzY/XY1J1T39PtA6BixbR8PoEWz0IGn4uKdObbBj8VOOCPqRf9/3p1wBADF0nBAksuOyEgs2JLa212nvl4raYP6bR5IsMFFYBuE1kTv8xZ5fvvLD18m8+kNTqLkKyu4XSPwie6hHAqum0bKDtFq7/9knhVvUeAdpKJD4L8OaQxP+5p7RKrL6FUShMs0PjZ562npuy9otbq5dtNJ5ze81vesiS3s/T1t6FzuL0UXDMRSa9CRyIkP4nNNbfMAsoScgttC+wfPOLhld8e550pln/mK9D7aNMDWsSifRjNpz7LUo8bjnq50tef2KzTtcxrTlPLtC5zhLCu9Zo+Suh1I9yC6wnsys2X6IaNsU8s2oaA2EtAJC94NNwFrwIAdv/JbS8nyGWUCUVfa//aOQgExMRwBSIpDRG+BMapfZBkhIA5LMvKokigOnEYlBmra0CoDNPyOWBaklX8ntF4Nd+wqF/HVlJgMJPlGmoXltUl8j3TNsBIRKUm+8HOnpZeQxhqTeTlRJMstNN3ynlpk0avV00UxWHkD4kJWySiUWG6cMUmDcRix+Rlf5yy2VLPySjwNKB+XTaA0q9JEiAGPNkKtfIwv6QPWTDXnwOQmH/qUy1LmTCYhFSVDKopy9h1AIgQQuEkK26ZiLFo3+/P8pFConIMAyJjJVe9NJKmj8gqzaUSNlCJZfYCaVo0MQ+00lC2XMiwAWRhGYkSMhlyoIlErUDBzN2AFRD5O478Q0g+V7A/JUW+q2S1F/4sHeY8lKgWOTp1JgdA3qUDdaC6e2CrHmC5O+0xlvA+EFAErEpPWlsZaCnK4LvkKKFIAPDeCuR+ZRQiX8g4K2oB9EaDNUP1ND6AHRDWJkEIMTrpZNtAvNbbD+Ig1O5ca11krQDCgWReP3JJtFefiEpuoOBbcz8ZiHM26U0n4lM5xncbx29QGeedNIHCfk6Us4LQNZ7HBMuS6qyxsp7BPL7RdHyPQAKZHd0GNG0cx6U9VMSagd87y1Cm6tBdBZE5nsiXYO96OccCfjD1aDWEAAYNwUIuZAhcoYFnAQBjDSEPCGVJSmT06x/zNcBGxiBHBGlCPRxCXoPWBR3uiMV2dA4vRM35QMlGEnW6YrUzf2pm18mhOoB0ZeqTw7bWP9Sg+5p0r7asgAYYkEaRutFYLqShDpJaH0h9jVH+aObVxwFbTLqOkBkdg9bW2s6+VD076VeQrUEMC0iaUtM6vX87JrgVSbg7XZKvjrhj2q0piVKPUAR8JM1EPO/hd7If1fth68t3/1JQk9XnD5H0wjKfCdwy9cocbdnnMEgw6H/ahPW/56MPrd5ZPVpknS0prkZzxjA98HagxOIR/Sy+Q+FJzT/Hfu1LxPJj7oXDAg5YutIC5rEG5XoNCJfA0QcVvtdZnM+s3Uui30NRPSqsLrHBRsDrSYE1oyubxMYHegxgYj9D4Wx31sBQEPX+oeIrL/Rwl3CtaAGE8Ct10FiTMJO2qhx7h35CdhSGDYmIKGZaBpZsPt+oNRLcs8gCOwQkSJDI2zzY3vOe/q2fTe9bdRsi7ApJjTKyA1VT2+GomXB4E3v/I1fb7rZmMA3rB8JHbqllE4/oqMql6kn3ljeq1cGjAYbHgLoicDT3zWhO8BszkHKB7YMCbTsB3+WzwHdEAl/fmjXrUWG6WIdVP4ZhMX2vsqLElvPMECHiLXW/X3ZUFkbxOJ9DGwJRfDaGm9+YM8N77l3uL7vHueSGxgHqPWx+ZdHdDCnLXAYvgfa/SRY17RQq4SJsT73X2s5AHR2CZkVsOfPfwNr3cwcfsj3Fz7gKfoNWL9bCPUy0bSvQy3fCeA2gXzuKMgGo2E4jH8BsTFkTEgqZJLTrL9XHheYkojZcH9o7J8Flcz1/T+/+tZEZZlXb9sOdHZNsyEjNC1mbQyb6vz6y33m4HHm0AB5YKbuAm0rgc4uIeafAKESryeiJ8D660T0LlVX0eHac7T6exMMUEcHQuNPatMTaDDBwkTr82c73E5gMEhCCPlJ12xPqdIjGvd+hdC23ehtT6H/gu2/Hbgx88Hqtf9FWIvIJz9DA7qol0bneiH8BlA68zoIUa2b0a8DeMyy5B/ZidPimscZOWlMgoNTFg1+9UoyjTYYuB3gxszdC1poOA30dkyduDABjC4iGAVik2djbmGtf0uG/4iC1k4OAxfMPyGiDkYqNrtmZnzDEKDYkXwIRUKQaGAOrhXg+4ROfs4iPwQREsnoRocMdR8Mx3NocxQ1q+8D+eInHAY/g7RuUZ66v+W3y65oeOW1TG3nT28Kb/xThHvyQGeXCMrzELdeSIZSAM1DIlg0cJCA5lgvGmOFLjUp2/k7AuZJ4AcmVQNes1uD9tOAlnpAZ55EVkBJ5yKQXgpjPs7MUoIutap2jHKzP90GAEa6A4A2y9kEDwfSRbXBsVEskndhXXgXbpx+nH0AGssi+VTapEdwGoRoY8PXGcatbPhdshYfivtv7FwJ2DIkKOuC2KwEm6f6b3zn0yMLAulnAviSn2AdVCzDZ8CRkamVPVKkHAbDCFBceTvpfTj06KDxFQYMm4CITpTk/0ymRje0XPbN92AkBOyMRM80bqRIIZBgVJj4TTK07yKr4a8J4ovZpXUfL9ot0badDzh44iIC1TACIHwrtLnZ6OBLDHNxOj24LJm/j7FjKaG970ij3AwhIZj2pu46yaD3vYTT/40xuohYOhDgRSQdgKDxXCAiwdrTJJ2zW03739iIe+x0AMGKfZFVx50GxffxIWXGWHK0yraBoV8LYGuC0iWGfhhEr7Qa98ESTojSOkLh4CAKJnRp/j/+gpkIIGaANWTAGH5isu8nFpTJ+EsWwDIjlbSMNJ+GwDsA/qyU9I8kxXYNtACpSfbzzM73OagJgiCM63sfJCle5UrRaUzgGo8kHWlpcl93NKChrWjgRDVfP/GN4PBSQ2JQ2omfJeXQ69Qpse83NwPIxxTzOj6JhpoPHfUkFiBUrDT+RdipfyDgDbXmysb6yUNRCeWplf3mLB9pdhkbGvxHMJFDkgg3MfNVqjYA5+lWje7953gtgLUgtAMEEkJoU67Nfo66IVTVhrboCmLWIPEAEd9LhDOSXq01sVNo3LOS0L6ff7ThFCYGCOQxgfDeaxQ6epkAOEYSsyEwEx1VZYaYQGbsfDJCWjyenH2IJTFCMJu6IPySBF1LInw8Wt/eGRi2DGwZYoAdNvQYFD4Hf/QnMGadY9VPTpbSGjuW0pQiiP4csHSHSKpRndDhcoBWCEH3+yLZB6J6CHGlyg4AhW6J6o1HCNzLTCQAwi6qYkKBWt5sBFkwRrRMhyk7mXwhDr/r5mEGdjj0AIi/SSQX5p1RobFyqUBPHujs5CiNMndI/VfgnpWUHD1Bp4IwR6AXE2glQWwB5GtguMMW9hnKzgJFpvGWrlOl9oR1lJBGPrwL1iN7ASFfQoLqlcwd+8z8XfFpPGmBVewvEyEgoGGQFlC/I+XsJjtZNkzdYKQFTIhq3Lqmr2/m2SDmcaDFQ5wOhqABkbIs9TQBXxIkPkcMIRzWB0Os48m+moNFkYtF8MsuAhPj8aAa9t/4zl+ZevZS1v4ekvblHMoINWk6V8KOpZPM/THMx1ihD+yDcgSMYDJMLM2/GL8ybIAzeEz5HcliShCovRu4ZTU5t59k5LBpJKJzSOBSBm0B6E0sZN7S/goJE1kDk7WROIAUwoAstQksz6v9ZqNM7Fnoo7iWnY0nGPux5DQADAx0r4IzdF6o6gkA8hIQFoJoMzGvJWnP0yr5ClltiDZhddLBOLQcyJXY1BtBwEYideKCPtHW8NgCY4UM4jAvVCKtlXU/e2EkjMpHCMuXHoAgKSDMfBqLt8C0gESDUaamm0cOpYApZvR7VfqyO+z8W+nG99ypK14kYXtL0/s3l99qQLCF4IdY4zoD8eeQypJIrhbJCGcRSyeVGY/hYA5lQUwXkEwuDMFftuHdT6Sa2dDLVeMg7G0/D1H6AKFmH4mclKwDgPHUeNnoox8h68GdWkkGi/DECFV+BrHDID3SNxazGLvAgo6hmU4E1pqU3SCE8ymHdVT7vnTlmDhirDt0NZlAESQSDoyyXgqIhSYICkR8CbS+kIUcgbCvFFgQm2Az1OLaNkgoeIE5IzScJ+JPCrL+0mjzicToam1W2wKFwtS8uKHlQMNuRr0ZgEwyiUFNAmD/vaSrfxKyBZAiwGqmah/QXdDoe+fME8pKCWlJKuUQAyBM/Tz+nUo5SEgJEgQCPKX/HaS2Cidre1oa0NjmnPT9bOR3YtuFr40gIRUbSTydJhtHyKmWRlmOnhM2DVzR8qr/O0Umy+8mlVioTfg7qmQiP9yOg7cQJakEpBTjOJzZaZCdxv7N8QChAKkaoLGLyfy5sJKfdPY1vKrpiZzBjjY5xZxtLwGFdVIIhrLsN4JkUuvw5aHBy4n9AkiUmJJXI9gUaSPDX9xvPrsoLPsw2nwV0Etzl1/2k3TSeUHrq79+ZoNvrvD31pUz0HdgQKavQCpjwbaSJ0KK1cbot4UkXmYCXslhcIcU9GaZHgW61+opFojnAF2dxgy7qLmVn0DIAWM7X7OHxAvIdy5gsq8xJvxNODTvifDpNgCrphdGs6GmdzAK6yTMYwDjLhKJK8HmlWB9DknnH0mI+9wKV9xX3iWQ75rKBLEyQcoBmISQMqkcP+mX5wGFdTIYPTM+yac5zRMuUOogkGSAWlB3M8TmfSTt+YZpk+H+6IBdsXni4OnJxziYCgDea0x4nQlqF4VesAqMP5VKXunQaLvIhQCKhEZ12FISQgijPQ+ER7RlRTX0YIh6C6xaPUNMp8KEmBHGTLCW0gG61pjEyE4NQFtGQ/AxBn4jkhzWA2WlrkzI0T9OvOpaRrYsD8ysOKjpDdhJD9B6JaC/WVuU3Nh/47a+anb0KTLBV9j4Z6vR4eiE3r75wENwYDvgBTUT+iOC8Wsl6AFm83od1v/EXXDaF92b303oXmUOGJTfAHSv1Zo1tAlHGWaj61TR76Tu2VtZcVuQnA+Y4CGY8KnqQ39KQGFGLc5AgJn7mMOtJpuKTozW/cz0Ui7K33NTAJmtbPTW+ug2BM2VYYPgH4xffkoKP9TubkQR20nfdzygo5dNuRkWocpsHtXkeTNa/D15CrfVIYS8UICvJxk8SMyfNX71XxPp4e+aXUti4NaZBaVpqAE6fAwm3GPSzdEGmQ64eGxsaRcMPWBM2OOemEV4ZtsPoOv/CYR/tTgs2amdTXqKn7i9FyjAWEICgk8BwltCJ3Xv4ob0Ln9F0yME/QOm4MQwGAS6X6Yx/B8T3y31Aj0l7d70kHBHg41GyJcxUU7Y4mHW9Csh6R8W2MsdU33BNOlTXcK2NKDDCwzrW3Wob/JO3rytfqa9S1D4X4b1Esc2Gevsf2OUJlVl9XYA6GbvkUeF3tM6GHrVV5HRaWnZvxWafw02Gwz4j3U1DX/XZRQFkg4z6t20FeguauP/DlxNftZo70cQ4iYSciNCt6QN/5nWOrp9635RUhkFZHSGAea9zLonTNp11o9Ewj99MOFtAafsIjbmUTbmaqRTTzLROzl0P9J/45Zfhv3zI3afDAKyYympUx5iafc3MjgrtPslz8ls91OJbUrUr2UTPhSqxBkNDYui8aZbj0TegIE9/anMfXp0KbD+qig/tLUNujHZTEQnsdEH+vBpzDhCayLZ8prWy/73yqxseF1rbeRKO/BXG9C5EaYuHxvNktmAhKWDes2w2IZFu6P9NAcSAIxyA7T0pT7en8q8r/bNtxGKQK1jRPSfv/0TqRr+SI66M5kLhkcGsOfmd24VoVxipGmkQM4buPGdZ1QWnPa/lW+sjKJJ3YUDk137CgDApp7FQG3rB0vVrZ8NVBC9QKFgfKsZrlRf7c9k3uC86IMcBxCmeznNBJTSqY/3pzJ/bwZb4ojyfoK5O37eYAv2JtMfK6UzHw9rA6h+44M0cP3VN/QvCfL9P/uTfg51/JxJ348Y03BgY+/Pr360tMS/xE/InUx84JhKOaCnS3t3/iXtvfHqL2XNaFIbe8HSNn9h6Lb8446uD7tm5wkHRq/3X9qEi/42/xWl8971Zc7YB26Q/cZmMlUMvGjrDwZq2zu92lMY/tRqGlZP/kVJ+q/rLa0yqm5NHWs7gO5VpvyLt1Aulfmn/huu/qORc54SvR294dB/rqHKSYv/duDphnf5vb4A8lNr6LrWRJ0AV2dNZUGj9BLebaHGm2HCx4lwo2B6vetlq8HTf0do+/eJ70VBB62ahzA/nfnxQHXbZUO//NNyrVGIasNmseeGd/8ol8q8pFTorYmmJ/abW4qDSKtMraeTKg+pnv6fv/MCTqWXyFDl3N31N9af2LfT2109DKf19H5mvacRpe41VRfOe+x96YwSLZn+n7/7ourD8rHwkZOiNene31zPRTyZkug/f+t3S0uC1cM/eeeIGYp5pa8ws2cn5SE3clqQS6dfHdjUFqb800q1E08cfrr+OWAtB/c/hmkq3ZgahjHU3Fzp3xu8eO9N7/lN9dynRfWFT4td1793sP/8d77w9MrWm5xcrFM0HXZcy0AoCMZdqYGEH9z8WoIaAjq7BGUGIEJ6KQlbzRANFWxCCFAHS+tnkNZ1kNZ1IPvHUM7NIHo/jMac+2/PdtwkCCBNJnybG4a3ucsGxIz76WCB3FyuE9UUUNvaRfjIZxnntQM/rwLfvJoSZ3+aE8P3YPggGIbOgn8D2YshnTy0l4RO+gjOelyiM6/R2XHw928vAKlYezu/A2gfS1IuAOsnheoPVk63v3N4hhD/AX/b0wUUO4HOTsJH/4Xxg+uALRsPOutY/pnox+Y7gY03HORv1yI5bycoXYCTeQTh/BxGL6mICWzAQ/DEua8GFl0Y/fyiv5uhOmY/3+iYpZti4CuxNrZiDSPTBjS/Buh+2QHvk8v3oFrqBdr7UEtXgfd1RGWJ95aA7j5ALQLKS6fXzlZ/HlhZFql7Wk2Dsl9htHg/KetCgfCKkW3Ve+untEr05DV6p/atzneux46nbkH4ot2opWrAS3MAOpG6N3oB9fATKK9cOkMlSVzCiNsEsJbt1q+xSJ4Cd+uvJ6GPF4/SLovRjRhIvfZHrO9+AN7gv9DEQOjg63HfZmBwL7B38BB8NSm4n++ExxfBYD48LWESI9CnNkt0rTEzlnV2rgcevw3Y91Jg51uiMuBcCShV0TQMWE196AChu7t4+OhBzJpUQnLoX1Xds/TH1RWDEg+v0Fh0vWpMLw4TrL4OK/XOKag8zzYxGwhJRETG6He7ZfX10TsciUJJo1CaU6US7a8gT2XIImJQikM35Zl8r3wPj+MeHkxozfjsWX92NCYzmrB16+bynDn+bZxvll/LaC3E2i0d7ecc6T1mgsaZ+buFItANkb600aTUvHNI6ks1y/sHb3zHrxPnf9C4yy46FA9MN7ZZjLcY/8k6mvjTLp7IfT1agjKG/usF0AWamJL1HGWLHLM1pCkIVW0XMLJLceja+7Ea+SKmJLNNfv7hCMoYhgxGPwJ/78qye2q1fvtrCACSF17Lzc0DLaFx7iKhTok7X4pDCYuDyKGjtHRGk3SkYV0VRv9JrUF/f9Q0SvRAR2yyZs6b6Ogw1DPw7r+fNLbT8sCx7gPxjFMkkJxXpCEb0wBbMHt2woT74N/7n8/Q3E7G/zxWPDemNEQS85l7L2DuGJ+HoMMTlJqslNTa++ugmvr8SAtLbLhAY+U9Mv10TqcW9HUKlVjPQf25oU2y0aQS0piwn9h7Wz1Rv3X0jCGF/lyIUm62ytsUUkdnZMeF4sy07nn8bpGgjMAaqgLXL5JYnjcANJ4RQflMzS09D3lGAEbwoTu4cix0/HsTycH/rppUFIg8d2MUbS/8FATzF9F96FkWBMxgGLIz0gTVx6TBVVUa6h0drCv0IUR7CfjK+w/rzgrH6TgdDXoiY3CyNhioA83J4/PxXCUnG5VZKgewEhRjSuppZQGzJiGl0X6dTPjhcgPV6x09AqVlBu19MmHv1k5q4FUg6yWsvSjN9FnUIkEKZDmS/cqPHd3w3mHvjn2V3B4J5EL0tQLfPHyXzHFBeZyOgmJZPD4Hvy80lr60+2GYrDVMSALCtmHCEDByon0DGxJKgKQhU//TetbcNXrCiMCDZxncex4pMazd8GkrS6mPkZDEoXso3+T/b+9sXuOqwjD+vO+5d75nYgozJXZabRHUiS1CKbRIdWhLs3I56UIXQsCFCxFBECskiguLCy2IIHShFlx0qKtWEPyY2EoL0oBgUtAioUkMZNqmmUlm5t6557wuzrSLVms1JhV6fn/AMKsfz3vue56zVhiICPkpZXS4It3lw51G++jC2RFCpWIf00vXgS8/Wm3+djgc9w1pu77WOfsOtWfOfK+7wX5jwinykx6IbTIT0eTFWYAVrYPn21k53jQPKFzKGVwHUK6pGIcoDCReIc9/SqKOXndJCoxNvB6Rl1QmaH8nXf10O2OONg9cZUCAc0V757y6+nNld7jocNy/UHJoVBL6wT4Vj73MgtfIT2VBAhOsTAirFzuZ7oXlx+cYM0WDOoDGrJfxH4oSCXmGxT8F0Rm7O7ku55N2tU6MgH0iFWPTbc0R8dsLu6aPxX7vN+HigEIjpxHE/8l2iROlw+H4C0oVYLCiMDglqXrR+L/K1pgXewPUvVQ3rQ9iwkGYLVjxAECuobLNJZ3sqm1IqHFiLorurs/ILTCAEVI+g+Mkur0Io4+x0HtL8cv19pO96Xghb/7tl20nSofDcTuVE8BQDhgZIgwPc3xuh2a1AbpzEeGPHxLGhHBuxmASwOxmyuw9JZn0lYeNotOk/JJEwVquAwlEbD0TEZOKAazIhK0rBPmsG3pHg/rM5dZPbxIqJxjFWY2+Xu/BGpyZO1E6HPczIvYM71wDeH+WUQYjXxJUhw1KFUHhBFADJR79StJbp/ezl/ic2StIFIR295J67d20Gp/0RureHyIWwChScQKxiA5JdDQBRZ8aqJOtppprjz9HqFQZ1WGD4m7Bnlf/8xTpROlwOG5hzN7/788BmLQrRFNV67D+14Fti35h4+4jEByC8jeSF1MwGhANEQ1bcUiRrTUzN1rpbh/JheRmxypBABJAPJAiot5Hd1aQKNBizBSRfC2kvqgvbzmfaFyMOhMv2QQ5WBGcrhqsVO/mxpITpcPhWGMGdgLzFyiz74hsSGb720g+QYR9RsxeEnqMIHlSsRh5Kdg+St3LiPrPlUNshUhsG4miDsSEyxC6RqR/Fsi3TLEzEUcXQ4+bwVIdWhYRmbiH2qjGrqpgVwkoDP59B4ITpcPhWDfKo0B5jFPnTxoOr8OAoIxGPKeyrGm7AW1RQo9oyCYivUVAcQXaZEAxggjAIhBFIg1DcoUMNYhpXgQzDFwWNpMLyaVf0pxsAz5QL0CHCXQ830N53GBsTJAfFaTLveax9VWXE6XD4biLyVyAWg2ojTMqJeuN6pSkDu4wnNMwgQZQB1p5tL45RACw8eDxlOlL3HSMBHHKbLjWnf7khSC1811B4joonQficUThLHSmg2h7P2Pyxu9XDMo1sffrp3DL885OlA6H439pS/ty541H2xoBUCgB5TKj9hajOUB4dl7jYzGqsQlergjVtxlgAoTAbBA1ZmFaEwivHiZUKozfDjCy84IybGocGhEU99jm9kauV9h87zXlROlwOFaXNKdrwFLTpr6FSeCH4z2v3KE5sVgU9O8E8oNAXw5YvGAT6T1MjXfiD1HCjpFsPRVaAAAAAElFTkSuQmCC">
+  </a>
+  <div class="title-pill">
+    <a href="#/">Manual de mapeamento de processos</a>
+    <div class="progress" aria-live="polite"><div class="bar" aria-hidden="true"><i id="barFill"></i></div><span id="progText">0 de 10</span></div>
+  </div>
+</header>
+<div class="scrim" id="scrim"></div>
+<div class="layout">
+  <nav class="index" id="index" aria-label="Sumário">
+    <div class="ix-head"><strong>Sumário</strong>
+      <button class="ix-close" id="ixClose" aria-label="Fechar sumário"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+    </div>
+    <a class="ix-item" href="#/" id="ixHome"><span class="ix-n">00</span><span class="ix-t">Capa</span><span></span></a>
+    <ul class="ix-list" id="ixList"></ul>
+    <div class="ix-foot"><button class="link-btn" id="resetBtn">Recomeçar leitura (limpa o progresso)</button></div>
+  </nav>
+  <main id="view" tabindex="-1"></main>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- Construtores: símbolos no estilo Lucid ---------- */
+const S = (vb, inner) => `<svg viewBox="${vb}" aria-hidden="true" focusable="false">${inner}</svg>`;
+const pent = (cx, cy, r) => Array.from({length:5}, (_, k) => {
+  const a = (-90 + 72*k) * Math.PI/180; return `${(cx + r*Math.cos(a)).toFixed(1)},${(cy + r*Math.sin(a)).toFixed(1)}`;
+}).join(" ");
+
+function evIcon(kind, cx, cy, r){
+  if (kind === "timer") return `<circle class="lc-wthin" cx="${cx}" cy="${cy}" r="${r*.5}"/><path class="lc-wthin" d="M${cx} ${cy-r*.34}V${cy}L${cx+r*.26} ${cy+r*.14}"/>`;
+  if (kind === "message"){ const w=r*1.0,h=r*.68,x=cx-w/2,y=cy-h/2; return `<rect class="lc-wthin" x="${x}" y="${y}" width="${w}" height="${h}"/><path class="lc-wthin" d="M${x} ${y}L${cx} ${cy+h*.08}L${x+w} ${y}"/>`; }
+  if (kind === "conditional"){ const w=r*.78,h=r*.98,x=cx-w/2,y=cy-h/2; return `<rect class="lc-wthin" x="${x}" y="${y}" width="${w}" height="${h}"/><path class="lc-wthin" d="M${x+3} ${y+h*.3}H${x+w-3}M${x+3} ${y+h*.55}H${x+w-3}M${x+3} ${y+h*.8}H${x+w-3}"/>`; }
+  if (kind === "multiple") return `<polygon class="lc-wthin" points="${pent(cx, cy+1, r*.5)}"/>`;
+  return "";
+}
+function ev(cx, cy, r, type, icon){
+  let s;
+  if (type === "end") s = `<circle class="lc-end" cx="${cx}" cy="${cy}" r="${r}"/>`;
+  else if (type === "inter") s = `<circle class="lc-ev" cx="${cx}" cy="${cy}" r="${r}"/><circle class="lc-ring" cx="${cx}" cy="${cy}" r="${r-3.5}"/>`;
+  else s = `<circle class="lc-ev" cx="${cx}" cy="${cy}" r="${r}"/>`;
+  return s + (icon ? evIcon(icon, cx, cy, r) : "");
+}
+function gw(cx, cy, r, kind){
+  let s = `<polygon class="lc-gw" points="${cx},${cy-r} ${cx+r},${cy} ${cx},${cy+r} ${cx-r},${cy}"/>`;
+  const k = r*.34;
+  if (kind === "x") s += `<path class="lc-w" d="M${cx-k} ${cy-k}L${cx+k} ${cy+k}M${cx+k} ${cy-k}L${cx-k} ${cy+k}"/>`;
+  if (kind === "plus") s += `<path class="lc-w" d="M${cx} ${cy-k*1.3}V${cy+k*1.3}M${cx-k*1.3} ${cy}H${cx+k*1.3}"/>`;
+  if (kind === "o") s += `<circle class="lc-w" cx="${cx}" cy="${cy}" r="${r*.4}"/>`;
+  if (kind === "event") s += `<circle class="lc-wthin" cx="${cx}" cy="${cy}" r="${r*.5}"/><circle class="lc-wthin" cx="${cx}" cy="${cy}" r="${r*.4}"/><polygon class="lc-wthin" points="${pent(cx, cy+.5, r*.24)}"/>`;
+  return s;
+}
+function ic(name, x, y){
+  if (name === "send") return `<rect class="lc-icf" x="${x}" y="${y+1}" width="13" height="9"/><path class="lc-icinv" d="M${x} ${y+1}l6.5 5l6.5-5"/>`;
+  if (name === "receive") return `<rect class="lc-ic" x="${x}" y="${y+1}" width="13" height="9"/><path class="lc-ic" d="M${x} ${y+1}l6.5 5l6.5-5"/>`;
+  if (name === "user") return `<circle class="lc-ic" cx="${x+6}" cy="${y+3.6}" r="3"/><path class="lc-ic" d="M${x} ${y+12.5}a6 5.2 0 0 1 12 0z"/>`;
+  if (name === "manual") return `<path class="lc-ic" d="M${x} ${y+3.5}h4v8.5h-4zM${x+4} ${y+3.5}h8M${x+4} ${y+6.3}h9M${x+4} ${y+9.1}h8M${x+4} ${y+12}h5.5"/>`;
+  if (name === "service") return `<circle class="lc-gear" cx="${x+6.5}" cy="${y+6.5}" r="4.6"/><circle class="lc-ic" cx="${x+6.5}" cy="${y+6.5}" r="1.7"/>`;
+  return "";
+}
+function tk(x, y, w, h, lines, icon, opts){
+  opts = opts || {};
+  const cx = x + w/2, cy = y + h/2, lh = 13.5;
+  const shift = opts.sub || opts.loop ? -5 : (icon ? 3 : 0);
+  const y0 = cy - (lines.length - 1) * lh/2 + 4 + shift;
+  let s = `<rect class="lc-task${opts.thick ? " thick" : ""}" x="${x}" y="${y}" width="${w}" height="${h}" rx="7"/>`;
+  if (icon) s += ic(icon, x + 7, y + 6);
+  s += `<text class="lc-t" text-anchor="middle">${lines.map((l, i) => `<tspan x="${cx}" y="${y0 + i*lh}">${l}</tspan>`).join("")}</text>`;
+  if (opts.sub){ const bx = cx - 6, by = y + h - 15; s += `<rect class="lc-ic" x="${bx}" y="${by}" width="12" height="11"/><path class="lc-ic" d="M${cx} ${by+2.5}v6M${cx-3} ${by+5.5}h6"/>`; }
+  if (opts.loop){ const by = y + h - 8; s += `<path class="lc-ic" d="M${cx+4.5} ${by-2.5}a5 5 0 1 1 -2 -2.8"/><path class="lc-ic" d="M${cx+1} ${by-6.5}l1.8 1.3l-1.2 2"/>`; }
+  return s;
+}
+function doc(x, y, w, h){
+  const f = w*.3;
+  return `<path class="lc-doc" d="M${x} ${y}H${x+w-f}L${x+w} ${y+f}V${y+h}H${x}Z"/><path class="lc-ic" style="stroke:#7E7E7E" d="M${x+w-f} ${y}V${y+f}H${x+w}"/>`;
+}
+function tunnel(cx, cy, r, entrada){
+  const w = r*1.1, h = r*.78, x0 = cx - w/2, xm = x0 + w*.55;
+  let s = `<circle class="lc-link" cx="${cx}" cy="${cy}" r="${r}"/><circle class="lc-link-ring" cx="${cx}" cy="${cy}" r="${r-3}"/>`;
+  s += `<path class="${entrada ? "lc-link-in" : "lc-link-out"}" d="M${x0} ${cy-h*.24}H${xm}V${cy-h/2}L${x0+w} ${cy}L${xm} ${cy+h/2}V${cy+h*.24}H${x0}Z"/>`;
+  return s;
+}
+const F = d => `<path class="lc-flow" marker-end="url(#lcArrow)" d="${d}"/>`;
+const mark = (n, x, y) => `<g class="mk"><circle cx="${x}" cy="${y}" r="10"/><text x="${x}" y="${y+4}" text-anchor="middle">${n}</text></g>`;
+const lbl = (x, y, lines, anchor) => `<text class="lc-lbl" text-anchor="${anchor||"middle"}">${[].concat(lines).map((l, i) => `<tspan x="${x}" y="${y + i*12.5}">${l}</tspan>`).join("")}</text>`;
+const vtext = (x, y, t, cls) => `<text class="${cls}" text-anchor="middle" transform="translate(${x} ${y}) rotate(-90)">${t}</text>`;
+// anotação: colchete tracejado com texto, ligado ao elemento por associação pontilhada
+function note(bx, by, h, lines, from){
+  let s = `<path class="lc-note" d="M${bx+8} ${by}H${bx}V${by+h}H${bx+8}"/>`;
+  s += `<text class="lc-note-t">${lines.map((l, i) => `<tspan x="${bx+6}" y="${by + 11 + i*11.5}">${l}</tspan>`).join("")}</text>`;
+  if (from) s += `<path class="lc-assoc" d="M${from[0]} ${from[1]}L${bx} ${by + h/2}"/>`;
+  return s;
+}
+// piscina com título e raias (faixas azuis, como no Lucid)
+function pool(W, top, title, lanes){
+  const H = lanes.reduce((a, l) => a + l.h, 0);
+  const tw = title.length * 6.6 + 24;
+  let s = `<rect class="lc-title" x="1" y="1" width="${tw}" height="24" rx="3"/><text class="lc-title-t" x="${1 + tw/2}" y="17" text-anchor="middle">${title}</text>`;
+  s += `<rect class="lc-pool" x="1" y="${top}" width="${W-2}" height="${H}" rx="6"/>`;
+  let y = top;
+  lanes.forEach((ln, i) => {
+    s += `<rect class="lc-band" x="1.7" y="${y + (i === 0 ? .7 : 0)}" width="28" height="${ln.h - (i === 0 ? .7 : 0) - (i === lanes.length - 1 ? .7 : 0)}" ${i === 0 ? 'rx="5"' : ""}/>`;
+    s += vtext(17, y + ln.h/2 + 4, ln.name, "lc-band-t");
+    if (i > 0) s += `<path class="lc-lane" d="M1 ${y}H${W-1}"/>`;
+    y += ln.h;
+  });
+  return s;
+}
+
+/* Símbolos (80 x 56) */
+const SYM = {
+  evStart: S("0 0 80 56", ev(40,28,17,"start")),
+  evInter: S("0 0 80 56", ev(40,28,17,"inter")),
+  evEnd: S("0 0 80 56", ev(40,28,17,"end")),
+  evTimer: S("0 0 80 56", ev(40,28,17,"inter","timer")),
+  evMsg: S("0 0 80 56", ev(40,28,17,"start","message")),
+  evCond: S("0 0 80 56", ev(40,28,17,"start","conditional")),
+  evMulti: S("0 0 80 56", ev(40,28,17,"start","multiple")),
+  gwX: S("0 0 80 56", gw(40,28,22,"x")),
+  gwPlus: S("0 0 80 56", gw(40,28,22,"plus")),
+  gwO: S("0 0 80 56", gw(40,28,22,"o")),
+  gwEv: S("0 0 80 56", gw(40,28,22,"event")),
+  task: S("0 0 80 56", tk(4,6,72,44,["Tarefa"])),
+  taskUser: S("0 0 80 56", tk(4,6,72,44,["Usuário"],"user")),
+  taskManual: S("0 0 80 56", tk(4,6,72,44,["Manual"],"manual")),
+  taskService: S("0 0 80 56", tk(4,6,72,44,["Serviço"],"service")),
+  taskSend: S("0 0 80 56", tk(4,6,72,44,["Enviar"],"send")),
+  taskReceive: S("0 0 80 56", tk(4,6,72,44,["Receber"],"receive")),
+  sub: S("0 0 80 56", tk(4,6,72,44,["Subprocesso"],"",{sub:true})),
+  call: S("0 0 80 56", tk(4,6,72,44,["Atividade de","chamada"],"",{thick:true})),
+  loop: S("0 0 80 56", tk(4,6,72,44,["Loop"],"",{loop:true})),
+  tunIn: S("0 0 80 56", tunnel(40,28,18,true)),
+  tunOut: S("0 0 80 56", tunnel(40,28,18,false)),
+  seq: S("0 0 80 56", `<path class="lc-flow" marker-end="url(#lcArrow)" d="M8 28H72"/>`),
+  msg: S("0 0 80 56", `<circle class="lc-open" cx="11" cy="28" r="4"/><path class="lc-msg" d="M15 28H64"/><path class="lc-open" d="M64 23L73 28L64 33Z"/>`),
+  assoc: S("0 0 80 56", `<path class="lc-assoc" d="M8 28H72"/>`),
+  data: S("0 0 80 56", doc(27,8,26,38)),
+  dataIn: S("0 0 80 56", doc(27,8,26,38) + `<path class="lc-open" d="M31 15h6v-3l5 5l-5 5v-3h-6z"/>`),
+  dataOut: S("0 0 80 56", doc(27,8,26,38) + `<path class="lc-icf" d="M31 15h6v-3l5 5l-5 5v-3h-6z"/>`),
+  coll: S("0 0 80 56", doc(27,8,26,38) + `<path class="lc-ic" style="stroke-width:2" d="M36 34v7M40 34v7M44 34v7"/>`),
+  store: S("0 0 80 56", `<path class="lc-gw" d="M22 14v26c0 4 8 7 18 7s18-3 18-7V14"/><ellipse class="lc-gw" cx="40" cy="14" rx="18" ry="6.5"/><path class="lc-wthin" d="M22 20c0 4 8 7 18 7s18-3 18-7"/>`),
+  note: S("0 0 80 56", note(22,10,36,["Detalhe","da tarefa"])),
+  group: S("0 0 80 56", `<rect class="lc-group" x="8" y="8" width="64" height="40" rx="8"/>`),
+  pool: S("0 0 80 56", `<rect class="lc-pool" x="4" y="8" width="72" height="42" rx="4"/><rect class="lc-band" x="4.7" y="8.7" width="12" height="40.6" rx="3"/>`),
+  lanes: S("0 0 80 56", `<rect class="lc-pool" x="4" y="8" width="72" height="42" rx="4"/><rect class="lc-band" x="4.7" y="8.7" width="12" height="20.3" rx="3"/><rect class="lc-band" x="4.7" y="29" width="12" height="20.3"/><path class="lc-lane" d="M4 29H76"/>`),
+  title: S("0 0 80 56", `<rect class="lc-title" x="8" y="18" width="64" height="20" rx="3"/><text class="lc-title-t" style="font-size:9.5px" x="40" y="31" text-anchor="middle">Nome do processo</text>`)
+};
+
+/* ---------- Diagramas ---------- */
+const D_ASIS = (() => {
+  const W = 1410;
+  let s = pool(W, 34, "Reembolso de despesas", [{name:"Colaborador", h:120},{name:"Analista financeiro", h:190}]);
+  s += ev(70,94,12,"start") + lbl(70,122,["Despesa","realizada"]);
+  s += F("M82 94H118") + tunnel(132,94,12,false) + lbl(132,122,"A") + F("M144 94H168");
+  s += tk(170,66,120,56,["Enviar comprovantes","por e-mail"],"send");
+  s += note(306,40,24,["Notas fiscais","e recibos"],[290,74]);
+  s += F("M290 94H310V249H328");
+  s += tk(330,221,120,56,["Conferir documentos","um a um"],"manual");
+  s += F("M450 249H474");
+  s += gw(500,249,26,"x") + lbl(534,246,["Documentação","completa?"],"start");
+  s += F("M500 223V189H780V221") + lbl(508,210,"Sim","start");
+  s += F("M500 275V309H538") + lbl(508,296,"Não","start");
+  s += tk(540,284,120,50,["Solicitar comprovantes","faltantes"],"send");
+  s += F("M660 309H688") + tunnel(702,309,12,true) + lbl(702,336,"A");
+  s += F("M714 309H780V277");
+  s += gw(780,249,26,"x");
+  s += F("M806 249H828");
+  s += tk(830,221,110,56,["Calcular valores","manualmente"],"manual");
+  s += F("M940 249H960");
+  s += tk(962,221,110,56,["Registrar","no sistema"],"user");
+  s += note(1024,290,20,["Sistema financeiro"],[1017,277]);
+  s += F("M1072 249H1092");
+  s += tk(1094,221,110,56,["Programar","pagamento"],"user");
+  s += F("M1204 249H1224");
+  s += tk(1226,221,110,56,["Arquivar","documentos"],"manual");
+  s += F("M1336 249H1362");
+  s += ev(1376,249,14,"end") + lbl(1376,281,"Fim");
+  s += mark(1,184,13) + mark(2,42,46) + mark(3,52,72) + mark(4,468,216) + mark(5,724,290) + mark(6,392,50) + mark(7,940,219) + mark(8,1396,227);
+  return S(`0 0 ${W} 346`, s);
+})();
+
+const D_TOBE = (() => {
+  const W = 1100;
+  let s = pool(W, 34, "Reembolso de despesas", [{name:"Colaborador", h:120},{name:"Sistema", h:120},{name:"Analista financeiro", h:190}]);
+  s += ev(80,94,12,"start") + lbl(80,122,["Despesa","realizada"]);
+  s += F("M92 94H128");
+  s += tk(130,66,120,56,["Preencher formulário","com anexos"],"user");
+  s += note(270,40,20,["Anexos obrigatórios"],[250,74]);
+  s += F("M250 94H272V214H298");
+  s += tk(300,186,120,56,["Registrar e","calcular total"],"service");
+  s += F("M420 214H435V369H448");
+  s += tk(450,341,120,56,["Validar conforme","a política"],"user");
+  s += F("M570 369H594");
+  s += gw(620,369,26,"x") + lbl(652,373,"Aprovado?","start");
+  s += F("M620 343V309H660") + lbl(628,330,"Sim","start");
+  s += tk(662,284,110,50,["Aprovar","pagamento"],"user");
+  s += F("M772 309H840V341");
+  s += F("M620 395V429H660") + lbl(628,414,"Não","start");
+  s += tk(662,404,110,50,["Devolver com","justificativa"],"send");
+  s += F("M772 429H840V397");
+  s += gw(840,369,26,"x");
+  s += F("M866 369H880V214H898");
+  s += tk(900,186,110,56,["Notificar","o colaborador"],"service");
+  s += F("M1010 214H1040");
+  s += ev(1054,214,14,"end") + lbl(1054,246,"Fim");
+  return S(`0 0 ${W} 466`, s);
+})();
+
+const D_TUNEL_PAR = S("0 0 620 180",
+  pool(620, 26, "Exemplo de túnel", [{name:"Área", h:152}]) +
+  ev(50,101,10,"start") + F("M60 101H72") + tunnel(86,101,12,false) + lbl(86,128,"A") + F("M98 101H122") +
+  tk(124,79,110,44,["Conferir","documentos"],"user") + F("M234 101H264") +
+  gw(288,101,22,"x") + lbl(316,105,"Completo?","start") +
+  F("M288 79V59H520V77") + lbl(296,72,"Sim","start") +
+  F("M288 123V143H330") + lbl(296,136,"Não","start") +
+  tk(332,121,100,44,["Solicitar","correção"],"send") + F("M432 143H456") + tunnel(470,143,12,true) + lbl(470,170,"A") +
+  F("M482 143H520V125") + gw(520,101,22,"x") + F("M542 101H570") + ev(584,101,12,"end") + lbl(584,128,"Fim"));
+
+const D_LANES = S("0 0 520 212",
+  pool(520, 26, "Nome do processo", [{name:"Área A",h:92},{name:"Área B",h:92}]) +
+  ev(70,72,12,"start") + F("M82 72H116") + tk(118,50,110,44,["Tarefa da","área A"]) +
+  F("M228 72H252V164H278") + tk(280,142,110,44,["Tarefa da","área B"]) +
+  F("M390 164H446") + ev(460,164,12,"end") +
+  lbl(262,112,["Passagem de","responsabilidade"],"start"));
+
+const D_ORG = (() => {
+  const cols = [["Área solicitante","Solicitar","o item"],["Compras","Cotar e","comprar"],["Financeiro","Aprovar e","pagar"],["Estoque","Receber e","entregar"]];
+  let s = `<rect class="t-box" x="255" y="8" width="130" height="32" rx="8"/><text class="t-tb" x="320" y="28" text-anchor="middle">Diretoria</text>`;
+  s += `<path class="t-line" d="M320 40V56M95 56H545M95 56V72M245 56V72M395 56V72M545 56V72"/>`;
+  cols.forEach((c, i) => {
+    const cx = 95 + i*150;
+    s += `<rect class="t-box" x="${cx-64}" y="72" width="128" height="32" rx="8"/><text class="t-tb" x="${cx}" y="92" text-anchor="middle">${c[0]}</text>`;
+    s += `<rect class="t-col" x="${cx-64}" y="104" width="128" height="148"/><path class="t-sep" d="M${cx-64} 104V252M${cx+64} 104V252"/>`;
+    s += `<circle class="t-dot" cx="${cx}" cy="168" r="7"/><text class="t-lbl" text-anchor="middle"><tspan x="${cx}" y="196">${c[1]}</tspan><tspan x="${cx}" y="209">${c[2]}</tspan></text>`;
+  });
+  s += `<path class="t-acc" marker-end="url(#tArrowAcc)" d="M14 168H88M102 168H238M252 168H388M402 168H538M552 168H626"/>`;
+  return S("0 0 640 260", s);
+})();
+
+const HERO = (() => {
+  const seg = (d, len, delay) => `<path class="t-flow draw" style="--len:${len};--d:${delay}s" marker-end="url(#tArrow)" d="${d}"/>`;
+  const pop = (inner, delay) => `<g class="pop" style="--d:${delay}s">${inner}</g>`;
+  const box = (x, y, w, h, l1, l2) => `<rect class="t-task" x="${x}" y="${y}" width="${w}" height="${h}" rx="9"/><text class="t-t" text-anchor="middle"><tspan x="${x+w/2}" y="${y+h/2-2}">${l1}</tspan><tspan x="${x+w/2}" y="${y+h/2+13}">${l2}</tspan></text>`;
+  const tl = (x, y, lines, a) => `<text class="t-lbl" text-anchor="${a||"middle"}">${lines.map((l,i)=>`<tspan x="${x}" y="${y+i*13}">${l}</tspan>`).join("")}</text>`;
+  const gwt = (cx, cy) => `<polygon class="t-gw" points="${cx},${cy-22} ${cx+22},${cy} ${cx},${cy+22} ${cx-22},${cy}"/><path class="t-x" d="M${cx-8} ${cy-8}L${cx+8} ${cy+8}M${cx+8} ${cy-8}L${cx-8} ${cy+8}"/>`;
+  let s = "";
+  s += pop(`<circle class="t-ev" cx="24" cy="75" r="13"/>` + tl(24,106,["Início"]), 0);
+  s += seg("M37 75H72", 35, .15);
+  s += pop(box(74,51,122,48,"Levantar o","processo real"), .4);
+  s += seg("M196 75H228", 32, .65);
+  s += pop(box(230,51,122,48,"Desenhar","em BPMN"), .9);
+  s += seg("M352 75H382", 30, 1.15);
+  s += pop(gwt(404,75) + tl(432,79,["Há melhorias?"],"start"), 1.4);
+  s += seg("M404 53V30H480", 99, 1.65);
+  s += pop(box(482,8,122,44,"Redesenhar","(TO-BE)") + tl(412,44,["Sim"],"start"), 1.9);
+  s += seg("M604 30H640V51", 57, 2.15);
+  s += seg("M404 97V120H640V99", 281, 1.65);
+  s += pop(tl(412,112,["Não"],"start"), 1.8);
+  s += pop(gwt(640,75), 2.35);
+  s += seg("M662 75H688", 26, 2.55);
+  s += pop(`<circle class="t-evend" cx="702" cy="75" r="13"/>` + tl(702,106,["Fim"]), 2.8);
+  return S("0 0 730 132", s);
+})();
+
+/* ---------- Conteúdo ---------- */
+const sym = (fig, name, desc) => `<div class="sym"><div class="sym-fig">${fig}</div><div><h4>${name}</h4><p>${desc}</p></div></div>`;
+const resumo = items => `<section class="resumo" aria-label="Resumo do módulo"><h2>Em resumo</h2><ul>${items.map(i => `<li>${i}</li>`).join("")}</ul></section>`;
+
+const SECTIONS = [
+{ id:"por-que", title:"Por que documentar processos", time:4,
+  scope:"Padronização, dependência de pessoas e o que uma operação documentada ganha.",
+  resumo:["Processos que só existem na cabeça das pessoas tornam a empresa dependente delas.","Ineficiências operacionais consomem receita e tempo de trabalho.","Mapear é o primeiro passo para padronizar, treinar e melhorar."],
+  html:`
+<p class="lead">Toda empresa tem processos, estejam eles escritos ou não. A diferença está em onde eles ficam guardados: na cabeça de algumas pessoas ou em uma documentação que qualquer um consegue consultar.</p>
+<p>Quando o jeito certo de fazer uma tarefa depende de quem está na função, a empresa não tem um processo definido. Ela tem uma dependência de pessoas. Férias, desligamentos ou um aumento de demanda expõem essa fragilidade rapidamente.</p>
+<h2>O custo da desorganização</h2>
+<p>Levantamentos da IDC (International Data Corporation) apontam que empresas perdem entre 20% e 30% da receita anual com ineficiências e falhas em processos operacionais. Um estudo da McKinsey indica que colaboradores gastam cerca de 20% da semana de trabalho procurando informações internas ou tentando entender como executar uma tarefa, tempo que não gera valor para o cliente.</p>
+<h2>O que a padronização traz</h2>
+<dl class="terms">
+<div><dt>Previsibilidade e controle de custos</dt><dd>Com os fluxos documentados, a gestão conhece o tempo real das entregas e onde os recursos são consumidos.</dd></div>
+<div><dt>Menos retrabalho e desperdício</dt><dd>O processo padronizado funciona como barreira contra erros recorrentes e etapas desnecessárias.</dd></div>
+<div><dt>Crescimento sem perda de controle</dt><dd>Uma operação só cresce com segurança quando pode ser replicada sem supervisão constante.</dd></div>
+<div><dt>Treinamento mais rápido</dt><dd>O mapa do processo vira um guia visual para quem chega, reduzindo o tempo até a pessoa ganhar autonomia.</dd></div>
+</dl>
+<div class="callout"><b>Um caso clássico</b><p>O McDonald's não se expandiu por ter os cozinheiros mais experientes, e sim por desenhar em detalhe cada posição de equipamento, tempo de preparo e ordem de montagem (o Speedee Service System). Um colaborador novo aprende a operação rápido e entrega o mesmo padrão em qualquer unidade.</p></div>
+<p>O mapeamento de processos é o primeiro passo nesse caminho: tirar o trabalho da cabeça das pessoas e transformá-lo em conhecimento da organização, disponível para consulta, análise e melhoria.</p>`},
+
+{ id:"processo", title:"O que é um processo", time:5,
+  scope:"Definição, elementos que todo processo tem e os níveis de detalhe usados no mapeamento.",
+  resumo:["Processo é uma sequência de atividades que transforma uma entrada em um resultado.","Todo processo tem gatilho, sequência, responsáveis, decisões e um fim definido.","Processos podem ser vistos em níveis, do macroprocesso até a tarefa."],
+  html:`
+<p class="lead">Um processo é uma sequência estruturada de atividades que transforma uma entrada, como um pedido ou uma informação, em uma entrega de valor para um cliente interno ou externo.</p>
+<div class="ipo" role="group" aria-label="Exemplo de processo: entrada, atividades e saída">
+  <div><b>Entrada</b><span>Uma área da empresa solicita a compra de um item</span></div>
+  <div class="arr" aria-hidden="true"><svg viewBox="0 0 14 14"><path d="M1 7h11M8 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></div>
+  <div class="mid"><b>Atividades</b><span>Cotar com fornecedores, aprovar a compra, emitir o pedido, receber o item</span></div>
+  <div class="arr" aria-hidden="true"><svg viewBox="0 0 14 14"><path d="M1 7h11M8 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></div>
+  <div><b>Saída</b><span>Item entregue à área solicitante, no prazo e na quantidade certa</span></div>
+</div>
+<p>Um exemplo do cotidiano ajuda a fixar a ideia: na entrega de uma pizza, o cliente faz o pedido (início), a cozinha prepara, o entregador leva até o endereço e o processo termina quando o cliente recebe o produto (fim). Cada etapa tem um responsável claro.</p>
+<h2>Elementos de todo processo</h2>
+<dl class="terms">
+<div><dt>Gatilho</dt><dd>O acontecimento que dá início à rotina: a chegada de um e-mail, uma solicitação no sistema, uma data do mês.</dd></div>
+<div><dt>Sequência de atividades</dt><dd>As ações executadas, em ordem, incluindo os sistemas, planilhas e documentos consultados.</dd></div>
+<div><dt>Responsáveis</dt><dd>O cargo ou a área que executa cada atividade.</dd></div>
+<div><dt>Decisões e exceções</dt><dd>Os pontos em que o caminho se divide: o que acontece quando falta um documento, quando um valor passa do limite ou quando algo foge do padrão.</dd></div>
+<div><dt>Critério de conclusão</dt><dd>O marco que define que o processo terminou e entregou o seu resultado.</dd></div>
+</dl>
+<h2>Níveis de detalhe</h2>
+<p>Processos podem ser olhados de mais longe ou de mais perto. A hierarquia abaixo organiza esses níveis, do mais amplo para o mais específico:</p>
+<ol class="levels">
+<li><b>Macroprocesso</b><span>Grande conjunto de processos ligados a uma função da empresa. Ex.: Gestão financeira.</span></li>
+<li><b>Processo</b><span>Sequência com início, meio e fim que entrega um resultado. Ex.: Contas a pagar.</span></li>
+<li><b>Subprocesso</b><span>Parte de um processo com lógica própria. Ex.: Cadastro de fornecedor.</span></li>
+<li><b>Atividade</b><span>Ação executada dentro do subprocesso. Ex.: Registrar os dados do fornecedor.</span></li>
+<li><b>Tarefa</b><span>O menor nível, que não se divide mais. Ex.: Preencher o CNPJ no sistema.</span></li>
+</ol>
+<div class="callout"><b>Qual nível usar</b><p>Nem todo mapeamento desce até a tarefa. Para enxergar a empresa como um todo, os macroprocessos bastam. Para treinar alguém em uma rotina ou encontrar a origem de um problema, é preciso chegar às atividades e tarefas.</p></div>`},
+
+{ id:"organograma", title:"Processos e organograma", time:4,
+  scope:"Como a estrutura da empresa se relaciona com os fluxos de trabalho.",
+  resumo:["O organograma mostra quem é quem; o mapa de processos mostra como o trabalho flui.","Processos atravessam áreas, e os problemas costumam surgir nas passagens entre elas.","As raias dos fluxogramas e os cargos do Guia Prático ligam os dois."],
+  html:`
+<p class="lead">O organograma e o mapa de processos descrevem a mesma empresa por ângulos diferentes. Um mostra como ela está organizada; o outro, como o trabalho de fato acontece.</p>
+<div class="tbl"><table>
+<thead><tr><th></th><th>Organograma</th><th>Mapa de processos</th></tr></thead>
+<tbody>
+<tr><td><b>Responde</b></td><td>Quem é quem e quem responde a quem</td><td>O que é feito, em que ordem e por quem</td></tr>
+<tr><td><b>Leitura</b></td><td>Vertical, por hierarquia</td><td>Horizontal, do início ao fim do fluxo</td></tr>
+<tr><td><b>Unidade</b></td><td>Setores, cargos e pessoas</td><td>Atividades, decisões e entregas</td></tr>
+<tr><td><b>Serve para</b></td><td>Localizar responsáveis e linhas de reporte</td><td>Entender, padronizar e melhorar o trabalho</td></tr>
+</tbody></table></div>
+<h2>Visão funcional e visão por processos</h2>
+<p>Na visão funcional, cada área cuida da sua parte. Na visão por processos, o trabalho é enxergado como um fluxo que atravessa várias áreas até chegar ao resultado.</p>
+<figure><div class="plain-fig">${D_ORG}</div>
+<figcaption>O organograma organiza as áreas em colunas. O processo de compra corre na horizontal, passando por quatro delas.</figcaption></figure>
+<p>É justamente nas passagens de uma área para outra que os problemas costumam aparecer: informação que chega incompleta, tarefa que fica parada esperando alguém, responsabilidade que ninguém assume. Por isso o mapeamento olha para o fluxo inteiro, e não só para cada área isolada.</p>
+<h2>Como ler um organograma</h2>
+<dl class="terms">
+<div><dt>Níveis</dt><dd>De cima para baixo: diretoria, setores e cargos. Quanto mais alto, maior a abrangência de decisão.</dd></div>
+<div><dt>Linhas</dt><dd>Indicam a quem cada setor ou cargo responde.</dd></div>
+<div><dt>Legenda</dt><dd>Diferencia os tipos de elemento, como setores, diretoria, colaboradores e terceirizados. Parceiros externos também podem aparecer, porque participam de processos da empresa.</dd></div>
+</dl>
+<h2>Como os dois se conectam</h2>
+<dl class="terms">
+<div><dt>As raias vêm do organograma</dt><dd>No desenho em BPMN, cada raia representa um cargo ou uma área. Os nomes usados nas raias devem bater com os do organograma.</dd></div>
+<div><dt>Todo processo tem um responsável</dt><dd>Mesmo passando por várias áreas, cada processo tem um cargo responsável principal por ele.</dd></div>
+<div><dt>No Guia Prático, os cargos fazem a ponte</dt><dd>A visualização por cargos mostra os processos de cada função, e o campo Setor liga cada processo à sua área no organograma.</dd></div>
+</dl>`},
+
+{ id:"mapeamento", title:"Mapeamento de processos", time:5,
+  scope:"O que é mapear, o que o mapa precisa mostrar e como as informações são levantadas.",
+  resumo:["O mapa mostra gatilho, sequência, responsáveis e decisões de um processo.","Ele é construído com quem executa o trabalho e validado por essa pessoa.","Retrata a prática real, não o ideal, e não é uma avaliação de desempenho."],
+  html:`
+<p class="lead">Mapear um processo é construir uma representação visual do seu passo a passo, mostrando quem executa cada atividade e em que ordem ela acontece.</p>
+<p>Um bom mapa deixa evidentes quatro coisas:</p>
+<ul>
+<li>o gatilho que inicia a rotina;</li>
+<li>a sequência cronológica das tarefas;</li>
+<li>os responsáveis por cada ação, sejam cargos ou áreas;</li>
+<li>as decisões e exceções que aparecem no meio do caminho.</li>
+</ul>
+<h2>Para que serve</h2>
+<ul>
+<li>Identificar oportunidades de melhoria e gargalos.</li>
+<li>Padronizar a forma como as atividades são realizadas.</li>
+<li>Facilitar o treinamento de novos colaboradores.</li>
+<li>Criar uma base de consulta clara sobre como cada processo funciona.</li>
+</ul>
+<h2>Como as informações são levantadas</h2>
+<p>O mapa não é feito a partir de suposições da gestão. Ele é construído com base em conversas guiadas com quem executa a tarefa no dia a dia, cobrindo estes pontos:</p>
+<ol class="steps">
+<li><b>Nome e objetivo do processo</b>Qual é a finalidade principal dessa rotina?</li>
+<li><b>Gatilho de início</b>O que faz o processo começar?</li>
+<li><b>Passo a passo</b>Quais ações são feitas, em qual ordem, e quais sistemas ou planilhas são usados?</li>
+<li><b>Decisões e exceções</b>O que acontece quando falta um documento ou algo foge do padrão?</li>
+<li><b>Responsáveis</b>Quem executa cada tarefa? Essa resposta define as raias do desenho.</li>
+<li><b>Critério de conclusão</b>Qual é o marco que indica que o processo terminou?</li>
+</ol>
+<div class="callout"><b>Princípio central</b><p>Mapeie o processo como ele acontece de fato, e não como deveria acontecer. Exceções, desvios e travas fazem parte do retrato real e não devem ser omitidos.</p></div>
+<p>O mapeamento também não é uma avaliação de desempenho de quem executa o processo. O objetivo é retratar a prática, incluindo as dificuldades, porque são elas que apontam onde melhorar.</p>
+<h2>Do levantamento à documentação</h2>
+<ol class="steps">
+<li><b>Levantamento</b>Conversas com quem executa o processo.</li>
+<li><b>Desenho</b>O fluxo é representado em BPMN.</li>
+<li><b>Validação</b>Quem executa confere se o desenho corresponde à realidade.</li>
+<li><b>Documentação</b>O desenho validado passa a fazer parte da documentação oficial do processo.</li>
+</ol>`},
+
+{ id:"as-is-to-be", title:"AS-IS e TO-BE", time:6,
+  scope:"O retrato do processo atual, os sinais de problema e como se constrói a versão melhorada.",
+  resumo:["AS-IS é o diagnóstico de como o processo funciona hoje; TO-BE é a proposta de melhoria.","Os principais sinais de problema são gargalo, retrabalho, redundância, etapas manuais e espera.","Um TO-BE só vale na prática depois de implementado."],
+  html:`
+<p class="lead">O AS-IS é o diagnóstico de como o processo funciona hoje. O TO-BE é o desenho de como ele deve passar a funcionar. Um depende do outro: não dá para projetar a melhoria sem antes conhecer a realidade.</p>
+<div class="tbl"><table>
+<thead><tr><th></th><th>AS-IS (como é)</th><th>TO-BE (como será)</th></tr></thead>
+<tbody>
+<tr><td><b>Representa</b></td><td>O retrato fiel de como o trabalho acontece atualmente</td><td>A versão futura, planejada e otimizada do processo</td></tr>
+<tr><td><b>Objetivo</b></td><td>Evidenciar gargalos, retrabalho, burocracia e etapas manuais</td><td>Eliminar desperdícios, padronizar e automatizar</td></tr>
+<tr><td><b>Serve de</b></td><td>Base para o redesenho</td><td>Direção para as ações de melhoria</td></tr>
+</tbody></table></div>
+<p>Muitas iniciativas de melhoria falham porque tentam desenhar o processo ideal sem estudar a operação atual. O AS-IS evita esse erro.</p>
+<h2>Sinais de problema no AS-IS</h2>
+<dl class="terms">
+<div><dt>Gargalo</dt><dd>Etapa que limita o ritmo do processo inteiro, onde o trabalho se acumula.</dd></div>
+<div><dt>Retrabalho</dt><dd>Atividade feita de novo por erro, falta de informação ou devolução. No desenho, aparece como um retorno a uma etapa anterior, feito por um par de túneis.</dd></div>
+<div><dt>Redundância</dt><dd>Etapas repetidas ou aprovações que não agregam valor, como a mesma conferência feita por duas pessoas.</dd></div>
+<div><dt>Etapa manual</dt><dd>Cálculos, digitação ou conferências feitos à mão quando poderiam ser automáticos. No desenho, aparecem como tarefas manuais ou sequências longas de preenchimento.</dd></div>
+<div><dt>Espera</dt><dd>Tempo em que nada acontece porque o processo aguarda uma resposta, assinatura ou documento.</dd></div>
+<div><dt>Dependência de pessoa</dt><dd>Etapa que só uma pessoa sabe executar.</dd></div>
+</dl>
+<h2>O redesenho</h2>
+<p>Com o AS-IS em mãos, a análise costuma revelar etapas desnecessárias, retrabalho ou falta de padronização. O redesenho propõe uma nova versão do processo, mais enxuta e organizada, que corrige esses problemas. Essa nova versão é o TO-BE.</p>
+<dl class="terms">
+<div><dt>Eliminar redundâncias</dt><dd>Se uma aprovação passa por quatro pessoas em sequência sem agregar valor, simplifique para alçadas claras ou aprovações em paralelo.</dd></div>
+<div><dt>Automatizar etapas manuais</dt><dd>Substituir conferências e cálculos pontuais por formulários padronizados e validações no sistema.</dd></div>
+<div><dt>Centralizar informações</dt><dd>Reduzir documentos soltos por e-mail ou mensagem, reunindo tudo já no início da solicitação.</dd></div>
+</dl>
+<h2>Exemplo: reembolso de despesas</h2>
+<div class="pairs">
+<div class="row hd"><div>AS-IS</div><div>TO-BE</div></div>
+<div class="row"><div class="asis">Colaborador envia recibos soltos, gerando conferência manual e retrabalho quando falta algum documento.</div><div class="tobe">Documentos chegam anexados e completos junto com a solicitação.</div></div>
+<div class="row"><div class="asis">Analista calcula o valor do reembolso manualmente, item por item.</div><div class="tobe">O valor total já vem calculado na solicitação.</div></div>
+<div class="row"><div class="asis">A solicitação é registrada manualmente no sistema depois da análise.</div><div class="tobe">A solicitação já nasce registrada no sistema.</div></div>
+<div class="row"><div class="asis">A documentação é arquivada manualmente ao final.</div><div class="tobe">Os documentos ficam vinculados à solicitação desde o início.</div></div>
+</div>
+<div class="callout"><b>Um TO-BE ainda não é realidade</b><p>O TO-BE representa o processo desejado, que ainda precisa ser implementado. Até lá, o AS-IS continua sendo a descrição de como o trabalho acontece.</p></div>
+<p>No módulo 07 você encontra esse mesmo exemplo desenhado em BPMN, nas versões AS-IS e TO-BE.</p>`},
+
+{ id:"bpmn", title:"Notação BPMN 2.0", time:3,
+  scope:"A linguagem visual usada nos fluxogramas e os seus blocos essenciais.",
+  resumo:["BPMN é uma linguagem visual padronizada: cada forma tem um significado fixo.","Cinco formas básicas bastam para ler a maior parte dos fluxogramas.","Os submódulos detalham cada grupo de símbolos."],
+  html:`
+<p class="lead">BPMN (Business Process Model and Notation) é uma linguagem visual padronizada para desenhar fluxos de trabalho. Ela funciona como um idioma comum: da diretoria à operação, qualquer pessoa olha para o mesmo diagrama e entende como o trabalho acontece e quem é responsável por cada entrega.</p>
+<p>Sem um padrão, cada um desenha e interpreta fluxos do seu jeito. Com o BPMN, cada forma tem um significado fixo. A versão atual da notação é a 2.0.</p>
+<div class="callout"><b>Não é preciso decorar tudo</b><p>Na prática, cinco formas cobrem a maior parte dos desenhos: o círculo (evento), o retângulo arredondado (tarefa), o losango (decisão), a seta (fluxo) e as faixas horizontais (raias). Os demais símbolos refinam o significado dessas formas.</p></div>
+<p>Os símbolos deste manual seguem o mesmo estilo visual dos fluxogramas do Guia Prático, desenhados no Lucid.</p>
+<h2>Os blocos da notação</h2>
+<p>Cada bloco tem uma página própria com os símbolos e o que eles significam:</p>`,
+  subs:[
+  { id:"raias", title:"Piscinas e raias", desc:"Quem faz o quê.", icon:SYM.lanes,
+    html:`
+<p class="lead">Antes de olhar para as tarefas, o desenho delimita as responsabilidades. É isso que piscinas e raias fazem.</p>
+<div class="syms">
+${sym(SYM.title,"Nome do processo","Nos fluxogramas do Guia Prático, o nome do processo aparece em uma caixa escura acima do desenho.")}
+${sym(SYM.pool,"Piscina (pool)","A moldura que contém o processo completo, de ponta a ponta.")}
+${sym(SYM.lanes,"Raia (lane)","Divisão dentro da piscina, identificada pela faixa azul à esquerda. Cada raia é um cargo ou área, e toda tarefa dentro dela é responsabilidade desse participante.")}
+</div>
+<figure><div class="canvas sm">${D_LANES}</div><figcaption>Quando o fluxo muda de raia, o trabalho passa de uma área para outra.</figcaption></figure>
+<h2>Como ler</h2>
+<ul>
+<li>Leia o nome de cada raia antes de seguir o fluxo: ele diz quem faz cada etapa.</li>
+<li>Um processo executado por um único cargo tem uma só raia.</li>
+<li>Toda vez que uma seta cruza de uma raia para outra, há uma passagem de responsabilidade. Esses pontos merecem atenção na análise.</li>
+<li>As raias usam nomes de cargos ou áreas, e não nomes de pessoas, para que o desenho continue válido quando a equipe mudar.</li>
+</ul>`},
+  { id:"eventos", title:"Eventos e túneis", desc:"O que acontece no fluxo: início, meio, fim e as ligações entre partes do desenho.", icon:SYM.evStart,
+    html:`
+<p class="lead">Eventos são representados por círculos e marcam acontecimentos que afetam o processo. Nos fluxogramas do Guia Prático, o início e os eventos intermediários aparecem em azul, o fim aparece em preto e os túneis aparecem em rosa.</p>
+<div class="syms">
+${sym(SYM.evStart,"Evento inicial","Círculo azul de borda simples. É o gatilho que dá início ao processo, como a chegada de uma nova solicitação.")}
+${sym(SYM.evInter,"Evento intermediário","Círculo com borda dupla. Algo que ocorre entre o início e o fim, como aguardar a confirmação de um pagamento.")}
+${sym(SYM.evEnd,"Evento final","Círculo preto de borda grossa. Marca a conclusão do processo.")}
+</div>
+<h2>Tipos de evento</h2>
+<p>Um ícone dentro do círculo indica o que dispara o evento. Os mesmos ícones podem aparecer em eventos iniciais, intermediários ou finais.</p>
+<div class="syms">
+${sym(SYM.evTimer,"Temporizador","Uma data, um prazo ou uma recorrência. Ex.: todo dia 5 do mês; aguardar 48 horas.")}
+${sym(SYM.evMsg,"Mensagem","O processo começa, continua ou termina com a chegada ou o envio de uma mensagem, como um e-mail.")}
+${sym(SYM.evCond,"Condicional","O processo começa ou segue quando uma condição ou regra de negócio é atendida. Ex.: estoque abaixo do mínimo.")}
+${sym(SYM.evMulti,"Múltiplo","Mais de um acontecimento diferente pode disparar o processo.")}
+</div>
+<h2>Túneis</h2>
+<p>Túneis são eventos intermediários do tipo link, desenhados em rosa. Eles ligam dois pontos do mesmo processo sem uma seta entre eles. São usados quando o caminho precisa voltar a uma etapa anterior ou saltar para outra parte do desenho.</p>
+<div class="syms">
+${sym(SYM.tunIn,"Túnel de entrada","Seta preta. Marca o ponto em que o fluxo entra no túnel e deixa aquela parte do desenho.")}
+${sym(SYM.tunOut,"Túnel de saída","Seta branca. Marca o ponto em que o fluxo reaparece e continua.")}
+</div>
+<p>Os dois túneis de um par são identificados pelo mesmo nome, como "A", para que o leitor saiba onde o caminho continua. Nos fluxogramas do Guia Prático, sempre que um caminho volta a uma etapa anterior, esse retorno aparece como um par de túneis.</p>
+<figure><div class="canvas sm">${D_TUNEL_PAR}</div><figcaption>Se o documento não estiver completo, a correção é solicitada e o fluxo passa pelo túnel de entrada A. A leitura continua no túnel de saída A, antes da conferência, e o processo recomeça dali.</figcaption></figure>
+`},
+  { id:"atividades", title:"Atividades e tarefas", desc:"O que é executado.", icon:SYM.task,
+    html:`
+<p class="lead">Atividades são representadas por retângulos de cantos arredondados. São as ações práticas do dia a dia.</p>
+<div class="syms">
+${sym(SYM.task,"Tarefa","O nível mais básico de atividade, que não é subdividido no desenho.")}
+${sym(SYM.sub,"Subprocesso","Um grupo de tarefas reunido em uma única forma. O sinal de + indica que existe um detalhamento separado.")}
+${sym(SYM.call,"Atividade de chamada","Borda grossa. Aciona um processo que já existe e é reutilizado em vários pontos.")}
+${sym(SYM.loop,"Loop","Tarefa que se repete até que uma condição seja atendida.")}
+</div>
+<h2>Tipos de tarefa</h2>
+<p>O ícone no canto superior esquerdo diz como a tarefa é executada:</p>
+<div class="syms">
+${sym(SYM.taskUser,"Usuário","Executada por uma pessoa com apoio de um sistema. Ex.: preencher um cadastro na plataforma da empresa. É o tipo mais comum em processos administrativos.")}
+${sym(SYM.taskManual,"Manual","Executada no mundo físico, sem sistema. Ex.: juntar documentos impressos, conferir um material recebido.")}
+${sym(SYM.taskService,"Serviço","Executada automaticamente por um sistema, sem intervenção humana.")}
+${sym(SYM.taskSend,"Enviar","Tarefa em que se envia uma mensagem, como um e-mail ou uma notificação.")}
+${sym(SYM.taskReceive,"Receber","Tarefa em que se recebe uma mensagem.")}
+</div>
+<div class="callout"><b>Como as tarefas são nomeadas</b><p>Verbo no infinitivo seguido do objeto: "Conferir documentos", "Emitir pedido de compra". O nome descreve a ação, nunca a pessoa que a executa. Detalhes como o campo a preencher ou o botão a clicar ficam nas anotações.</p></div>`},
+  { id:"gateways", title:"Gateways", desc:"Decisões e caminhos.", icon:SYM.gwX,
+    html:`
+<p class="lead">Gateways são losangos que controlam por onde o fluxo segue. Eles dividem o caminho em mais de um e também reúnem caminhos que se separaram.</p>
+<div class="syms">
+${sym(SYM.gwX,"Exclusivo (X)","Só um caminho pode ser seguido. Ex.: \"O fornecedor está cadastrado?\" Sim ou não. É o gateway mais comum.")}
+${sym(SYM.gwPlus,"Paralelo (+)","Dispara dois ou mais caminhos ao mesmo tempo, sem escolha. Na junção, espera todos terminarem.")}
+${sym(SYM.gwO,"Inclusivo (O)","Um ou mais caminhos podem ser seguidos, conforme as condições atendidas.")}
+${sym(SYM.gwEv,"Baseado em evento","O caminho depende de qual evento acontece primeiro. Ex.: a resposta do fornecedor chega ou o prazo expira.")}
+</div>
+<h2>Como ler</h2>
+<ul>
+<li>No gateway exclusivo, a pergunta fica ao lado do losango, e cada saída traz a resposta correspondente ("Sim", "Não", "Acima de R$ 5 mil").</li>
+<li>Todo gateway aparece em par: um losango abre os caminhos e outro, sem pergunta, os reúne. Depois dele, o fluxo segue em uma única linha.</li>
+<li>Quando um caminho precisa voltar a uma etapa anterior, o desenho usa um par de túneis, e não uma seta de retorno. No AS-IS, esse retorno quase sempre indica retrabalho.</li>
+</ul>`},
+  { id:"conectores", title:"Conectores", desc:"Como os elementos se ligam.", icon:SYM.seq,
+    html:`
+<p class="lead">Conectores são as linhas que ligam os elementos do desenho. O tipo de linha muda o significado.</p>
+<div class="syms">
+${sym(SYM.seq,"Fluxo de sequência","Linha contínua com seta cheia. Indica a ordem em que as atividades acontecem. É o conector principal do desenho.")}
+${sym(SYM.msg,"Fluxo de mensagem","Linha tracejada com um círculo na origem e seta vazada. Representa a troca de mensagens entre participantes diferentes, como a empresa e um fornecedor.")}
+${sym(SYM.assoc,"Associação","Linha pontilhada. Liga anotações, documentos e dados aos elementos do fluxo.")}
+</div>
+<div class="callout"><b>Processos longos</b><p>Quando um processo não cabe em uma linha, o fluxo de sequência desce e continua na linha de baixo, da esquerda para a direita. Basta seguir a seta.</p></div>`},
+  { id:"artefatos", title:"Dados e artefatos", desc:"Documentos, sistemas e anotações.", icon:SYM.note,
+    html:`
+<p class="lead">Artefatos acrescentam informação ao desenho sem alterar o fluxo: documentos usados, dados armazenados e observações.</p>
+<div class="syms">
+${sym(SYM.note,"Anotação","Colchete tracejado com um texto explicativo. Nos fluxogramas do Guia Prático, é o artefato mais usado: registra o sistema acessado, o campo a preencher, o documento envolvido ou uma regra da tarefa.")}
+${sym(SYM.data,"Objeto de dados","Um documento ou informação usado no processo, como uma nota fiscal ou uma planilha.")}
+${sym(SYM.dataIn,"Entrada de dados","Informação de que as tarefas dependem para começar.")}
+${sym(SYM.dataOut,"Saída de dados","Informação produzida como resultado do processo.")}
+${sym(SYM.coll,"Coleção de dados","Um conjunto de documentos do mesmo tipo, como uma lista de orçamentos.")}
+${sym(SYM.store,"Armazenamento de dados","Onde as informações ficam guardadas e são consultadas: um sistema, um banco de dados, uma pasta compartilhada.")}
+${sym(SYM.group,"Grupo","Destaca visualmente um conjunto de elementos relacionados, sem mudar o fluxo.")}
+</div>`}
+  ]},
+
+{ id:"leitura", title:"Como ler um fluxograma", time:6,
+  scope:"Um roteiro de leitura e o exemplo do reembolso de despesas nas versões AS-IS e TO-BE.",
+  resumo:["Leia nesta ordem: nome, raias, início, setas, losangos, anotações e fim.","As anotações trazem os detalhes de execução, como sistema, campo e documento.","Retornos por túneis e tarefas manuais são os primeiros pontos a observar."],
+  html:`
+<p class="lead">Um fluxograma em BPMN é lido como um mapa: primeiro você se localiza, depois segue o caminho. Este roteiro funciona para qualquer processo do Guia Prático.</p>
+<ol class="steps">
+<li><b>Leia o nome do processo</b>Ele fica na caixa escura acima do desenho.</li>
+<li><b>Identifique os participantes</b>Leia o nome de cada raia, na faixa azul à esquerda.</li>
+<li><b>Encontre o início</b>Procure o círculo azul. O texto abaixo dele diz o que dispara o processo.</li>
+<li><b>Siga as setas</b>Percorra as tarefas na ordem das setas contínuas. Em processos longos, o fluxo continua na linha de baixo. Se o caminho chegar a um túnel de entrada, continue no túnel de saída com o mesmo nome.</li>
+<li><b>Pare em cada losango</b>Leia a pergunta e siga cada caminho até o losango que fecha a decisão.</li>
+<li><b>Leia as anotações</b>Os colchetes tracejados explicam detalhes de cada tarefa.</li>
+<li><b>Chegue ao fim</b>O círculo preto marca a conclusão do processo.</li>
+</ol>
+<h2>Exemplo AS-IS: reembolso de despesas</h2>
+<figure><div class="canvas wide">${D_ASIS}</div><figcaption>Arraste para o lado para ver o desenho completo. Os números indicam os pontos comentados abaixo.</figcaption></figure>
+<ul class="legend">
+<li><span class="mkr">1</span><span><b>Nome do processo.</b> A caixa escura identifica qual processo está desenhado.</span></li>
+<li><span class="mkr">2</span><span><b>Participantes.</b> Duas raias: Colaborador e Analista financeiro. Toda vez que o fluxo muda de raia, o trabalho passa de um para o outro.</span></li>
+<li><span class="mkr">3</span><span><b>Gatilho.</b> O processo começa quando o colaborador realiza uma despesa que precisa ser reembolsada.</span></li>
+<li><span class="mkr">4</span><span><b>Decisão.</b> O analista verifica se a documentação está completa. Se estiver, o fluxo segue pelo caminho de cima; se não, o analista solicita os comprovantes faltantes pelo caminho de baixo. Os dois caminhos se reúnem no losango de fechamento.</span></li>
+<li><span class="mkr">5</span><span><b>Retrabalho com túneis.</b> Depois da solicitação, o fluxo passa pelo túnel de entrada A e a leitura continua no túnel de saída A, no início do processo: o colaborador envia os comprovantes de novo e a conferência recomeça. Esse ciclo pode se repetir várias vezes.</span></li>
+<li><span class="mkr">6</span><span><b>Anotação.</b> O colchete detalha o que é enviado, sem poluir o nome da tarefa.</span></li>
+<li><span class="mkr">7</span><span><b>Etapas manuais.</b> O ícone de mão mostra tarefas feitas sem apoio de sistema: conferência, cálculo e arquivamento.</span></li>
+<li><span class="mkr">8</span><span><b>Fim.</b> O processo termina depois de uma sequência de quatro etapas do analista, duas delas manuais.</span></li>
+</ul>
+<h2>Exemplo TO-BE: o mesmo processo redesenhado</h2>
+<figure><div class="canvas mid">${D_TOBE}</div><figcaption>No TO-BE entra uma raia para o sistema, que assume as etapas repetitivas.</figcaption></figure>
+<h3>O que mudou</h3>
+<ul>
+<li>O ciclo de reenvio de comprovantes desapareceu: o formulário exige os anexos antes do envio, então não há mais túnel de retorno.</li>
+<li>O cálculo e o registro passaram a ser tarefas de serviço, feitas pelo sistema.</li>
+<li>O analista deixou de conferir item por item e passou a validar a solicitação conforme a política.</li>
+<li>A devolução com justificativa passou a ser um caminho formal do processo, e o sistema avisa o colaborador sobre a decisão nos dois casos.</li>
+</ul>`},
+
+{ id:"ferramentas", title:"Ferramentas: Lucid e Notion", time:3,
+  scope:"Onde os fluxogramas são desenhados, onde a documentação é consultada e as boas práticas de desenho.",
+  resumo:["O Lucid é onde os fluxogramas são desenhados; o Notion é onde são consultados.","Cada processo no Notion traz o fluxograma como imagem e em PDF.","As boas práticas de desenho garantem que todos os fluxogramas sejam lidos da mesma forma."],
+  html:`
+<p class="lead">O trabalho de documentação usa duas ferramentas com papéis diferentes: uma para desenhar, outra para consultar.</p>
+<h2>Lucid: onde os fluxos são desenhados</h2>
+<p>O Lucid (Lucidchart) é uma plataforma online de diagramação. Ela tem uma biblioteca própria de formas BPMN 2.0, permite que várias pessoas editem o mesmo desenho e exporta os fluxogramas como imagem ou PDF para compor a documentação.</p>
+<h3>Padrões dos fluxogramas do Guia Prático</h3>
+<p>Todos os fluxogramas seguem os mesmos padrões, o que permite ler qualquer um deles da mesma forma:</p>
+<ul>
+<li>O nome do processo aparece acima do desenho.</li>
+<li>O fluxo corre da esquerda para a direita; quando não cabe, continua na linha de baixo.</li>
+<li>As tarefas são nomeadas com verbo no infinitivo e objeto, e os detalhes ficam nas anotações.</li>
+<li>Todo losango de decisão tem um losango de fechamento, onde os caminhos se reúnem.</li>
+<li>Retornos a etapas anteriores aparecem como pares de túneis.</li>
+<li>Cada raia corresponde a um cargo ou área, com os mesmos nomes do organograma.</li>
+<li>Trechos muito extensos podem aparecer como subprocesso.</li>
+<li>AS-IS e TO-BE ficam em desenhos separados, com o mesmo nome de processo.</li>
+</ul>
+<h2>Notion: onde a documentação é consultada</h2>
+<p>O Notion reúne a documentação em páginas conectadas. É nele que fica o Guia Prático: uma base com todos os processos mapeados, que pode ser vista por processo, por cargo ou em tabela, e uma página para cada processo com o fluxograma e as suas informações. O módulo 09 explica essa estrutura em detalhe.</p>`},
+
+{ id:"guia-pratico", title:"Como usar o Guia Prático", time:5,
+  scope:"Como a documentação está organizada no Notion, o que cada campo significa e como acompanhar os processos.",
+  resumo:["Cada processo tem uma página com fluxograma, código, setor, responsável, periodicidade, descrição, valor esperado e gatilho.","A visualização por cargo mostra quantos e quais processos cada função executa.","Os comentários de cada página registram dúvidas e propostas de melhoria."],
+  html:`
+<p class="lead">O Guia Prático reúne, em um único ambiente no Notion, os processos da empresa e quem os executa. Ele serve tanto para consulta no dia a dia quanto para identificar oportunidades de melhoria.</p>
+<h2>Como está organizado</h2>
+<p>A página inicial apresenta o Guia Prático e traz a base de processos. Essa base pode ser vista de várias formas, escolhidas nas abas acima dela:</p>
+<dl class="terms">
+<div><dt>Processos</dt><dd>Quadro com uma coluna por cargo responsável. Cada cartão é um processo, com a miniatura do fluxograma, o código e o início da descrição. O número ao lado do cargo mostra quantos processos ele executa.</dd></div>
+<div><dt>Processos (tabela)</dt><dd>Os mesmos processos em formato de lista, útil para filtrar e ordenar por setor, periodicidade ou código.</dd></div>
+<div><dt>Cargos e Funcionários</dt><dd>Visualizações que partem das funções e das pessoas, conectando o Guia Prático ao organograma.</dd></div>
+</dl>
+<p>A busca, no canto superior da página, encontra qualquer processo pelo nome.</p>
+<h2>O que tem em cada página de processo</h2>
+<dl class="fields">
+<div><dt>Fluxograma</dt><dd>Imagem do desenho em BPMN. Clique para ampliar.</dd></div>
+<div><dt>PDF</dt><dd>O mesmo fluxograma em PDF, para download ou impressão.</dd></div>
+<div><dt>Código</dt><dd>Identificador único: sigla do setor e um número sequencial (por exemplo, RH-004 ou COM-012).</dd></div>
+<div><dt>Setor</dt><dd>A área da empresa a que o processo pertence.</dd></div>
+<div><dt>Responsável</dt><dd>O cargo que executa o processo.</dd></div>
+<div><dt>Periodicidade</dt><dd>Com que frequência o processo acontece: diária, semanal, mensal ou sob demanda.</dd></div>
+<div><dt>Descrição</dt><dd>O que o processo faz, em um parágrafo que resume as principais etapas.</dd></div>
+<div><dt>Valor esperado</dt><dd>O resultado que o processo deve entregar quando executado corretamente.</dd></div>
+<div><dt>Gatilho inicial</dt><dd>O que dispara o processo. Corresponde ao evento inicial do fluxograma.</dd></div>
+<div><dt>Comentários</dt><dd>Espaço no fim da página para registrar dúvidas, divergências e sugestões.</dd></div>
+</dl>
+<h2>Roteiro para estudar um processo</h2>
+<ol class="steps">
+<li><b>Encontre o processo</b>Pela busca, pela coluna do cargo no quadro ou filtrando o setor na tabela.</li>
+<li><b>Leia a descrição e o valor esperado</b>Entenda o que o processo faz e o que ele precisa entregar antes de olhar o desenho.</li>
+<li><b>Confira o gatilho</b>Ele deve corresponder ao evento inicial do fluxograma.</li>
+<li><b>Leia o fluxograma</b>Siga o roteiro do módulo 07: nome, raias, início, setas, decisões, anotações e fim.</li>
+<li><b>Compare com o resultado</b>O fim do desenho deve entregar o que o valor esperado descreve.</li>
+</ol>
+<h2>Para o gestor: como acompanhar os processos</h2>
+<dl class="terms">
+<div><dt>Distribuição de trabalho</dt><dd>O quadro por cargo mostra quantos processos cada função concentra. Colunas muito cheias podem indicar sobrecarga ou dependência de uma única pessoa.</dd></div>
+<div><dt>Rotina e planejamento</dt><dd>A periodicidade ajuda a organizar a agenda de rotinas: o que acontece todo dia, todo mês ou apenas quando solicitado.</dd></div>
+<div><dt>Critério de qualidade</dt><dd>O valor esperado funciona como referência para avaliar se o processo está entregando o que deveria.</dd></div>
+<div><dt>Treinamento</dt><dd>Para ensinar uma rotina, envie o link da página do processo para quem vai executá-la.</dd></div>
+<div><dt>Melhoria contínua</dt><dd>Use os comentários para registrar pontos de melhoria e divergências entre o desenho e a prática.</dd></div>
+</dl>
+<div class="callout"><b>Documentação viva</b><p>Um processo que muda na prática precisa mudar também no Guia Prático. Desenho e descrição desatualizados fazem as pessoas voltarem a depender de quem "sabe como faz".</p></div>`},
+
+{ id:"glossario", title:"Glossário e perguntas frequentes", time:4,
+  scope:"Os termos usados neste manual e as dúvidas mais comuns sobre mapeamento.",
+  html:`
+<h2 class="plain">Glossário</h2>
+<details><summary>Anotação</summary><div><p>Texto explicativo ligado a um elemento do fluxograma, desenhado como um colchete tracejado.</p></div></details>
+<details><summary>AS-IS</summary><div><p>O desenho do processo como ele acontece hoje, incluindo falhas e exceções.</p></div></details>
+<details><summary>Atividade</summary><div><p>Uma ação executada dentro de um processo. No BPMN, um retângulo de cantos arredondados.</p></div></details>
+<details><summary>BPMN</summary><div><p>Business Process Model and Notation. Linguagem visual padronizada para desenhar processos.</p></div></details>
+<details><summary>Código do processo</summary><div><p>Identificador único de cada processo no Guia Prático, formado pela sigla do setor e um número.</p></div></details>
+<details><summary>Evento</summary><div><p>Um acontecimento que afeta o processo: o início, algo no meio do caminho ou o fim. No BPMN, um círculo.</p></div></details>
+<details><summary>Fluxograma</summary><div><p>Representação visual de um processo. Quando segue as regras do BPMN, cada forma tem um significado padronizado.</p></div></details>
+<details><summary>Gargalo</summary><div><p>Etapa que limita o ritmo do processo inteiro, onde o trabalho se acumula.</p></div></details>
+<details><summary>Gateway</summary><div><p>Ponto de decisão ou de divisão do fluxo. No BPMN, um losango.</p></div></details>
+<details><summary>Gatilho inicial</summary><div><p>O acontecimento que dá início ao processo.</p></div></details>
+<details><summary>Macroprocesso</summary><div><p>Conjunto de processos ligados a uma grande função da empresa, como Gestão financeira.</p></div></details>
+<details><summary>Organograma</summary><div><p>Representação da estrutura da empresa: setores, cargos e relações de hierarquia.</p></div></details>
+<details><summary>Periodicidade</summary><div><p>A frequência com que um processo acontece: diária, semanal, mensal ou sob demanda.</p></div></details>
+<details><summary>Piscina</summary><div><p>A moldura que contém o processo inteiro no desenho BPMN.</p></div></details>
+<details><summary>Raia</summary><div><p>Faixa dentro da piscina que representa um cargo ou área responsável.</p></div></details>
+<details><summary>Redesenho</summary><div><p>A proposta de uma nova versão do processo, que corrige os problemas encontrados no AS-IS.</p></div></details>
+<details><summary>Retrabalho</summary><div><p>Atividade refeita por erro, falta de informação ou devolução.</p></div></details>
+<details><summary>Subprocesso</summary><div><p>Parte de um processo com lógica própria, que pode ser detalhada em um desenho separado.</p></div></details>
+<details><summary>Tarefa</summary><div><p>O menor nível de atividade, que não se divide mais no desenho.</p></div></details>
+<details><summary>TO-BE</summary><div><p>O desenho do processo como ele deve passar a funcionar depois da melhoria.</p></div></details>
+<details><summary>Túnel</summary><div><p>Evento intermediário do tipo link que liga dois pontos do mesmo processo sem uma seta. O túnel de entrada tem seta preta; o de saída, seta branca.</p></div></details>
+<details><summary>Valor esperado</summary><div><p>O resultado que um processo deve entregar quando executado corretamente.</p></div></details>
+<h2>Perguntas frequentes</h2>
+<details><summary>Preciso saber BPMN para entender a documentação?</summary><div><p>Não em profundidade. Com as formas básicas (círculo, retângulo, losango, seta e raia) e o roteiro de leitura do módulo 07, já é possível entender qualquer fluxograma do Guia Prático.</p></div></details>
+<details><summary>Qual a diferença entre um fluxograma comum e um em BPMN?</summary><div><p>Um fluxograma comum pode usar qualquer forma, e cada pessoa interpreta do seu jeito. No BPMN, cada forma tem um significado fixo, o que faz o desenho ser lido da mesma maneira por todos.</p></div></details>
+<details><summary>Por que o AS-IS mostra problemas?</summary><div><p>Porque ele retrata o processo real. Os problemas não são uma avaliação de quem executa: são justamente o que orienta a melhoria.</p></div></details>
+<details><summary>Se existe um TO-BE, o processo já mudou?</summary><div><p>Não necessariamente. O TO-BE é a versão desejada e precisa ser implementada. Até lá, o AS-IS descreve a prática atual.</p></div></details>
+<details><summary>Por que as raias têm cargos e não nomes de pessoas?</summary><div><p>Para que a documentação continue válida quando alguém mudar de função ou sair da empresa. O processo pertence ao cargo, não à pessoa.</p></div></details>
+<details><summary>O que fazer quando o processo real mudar?</summary><div><p>Atualizar o fluxograma e as informações da página no Guia Prático. Uma documentação desatualizada perde a confiança de quem consulta.</p></div></details>
+<details><summary>Posso repassar este manual aos colaboradores?</summary><div><p>Sim. O resumo no topo de cada módulo atende a uma leitura rápida, e o conteúdo completo serve como material de estudo para quem vai consultar ou executar os processos.</p></div></details>`}
+];
+
+/* ---------- Rotas ---------- */
+const ROUTES = [];
+SECTIONS.forEach((s, i) => {
+  s.n = i + 1;
+  ROUTES.push({ key:s.id, sec:s, sub:null, title:s.title });
+  (s.subs || []).forEach(sb => ROUTES.push({ key:s.id + "/" + sb.id, sec:s, sub:sb, title:sb.title }));
+});
+const TOTAL = SECTIONS.length;
+const pad = n => String(n).padStart(2, "0");
+
+/* ---------- Progresso de leitura ---------- */
+const KEY = "manual-mapeamento-v2";
+let state = { seen:{}, last:"" };
+try { const raw = localStorage.getItem(KEY); if (raw) state = Object.assign(state, JSON.parse(raw)); } catch(e){}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} };
+const seenCount = () => SECTIONS.filter(s => state.seen[s.id]).length;
+function markSeen(key){ if (!key || state.seen[key]) return; state.seen[key] = true; save(); refreshChrome(); }
+
+const CHECK = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const CHEV_R = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const CHEV_L = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+const $ = id => document.getElementById(id);
+const view = $("view"), index = $("index"), scrim = $("scrim"), menuBtn = $("menuBtn");
+let current = "";
+
+function refreshChrome(){
+  const n = seenCount();
+  $("barFill").style.width = (n / TOTAL * 100) + "%";
+  $("progText").textContent = `${n} de ${TOTAL}`;
+  $("ixList").innerHTML = SECTIONS.map(s => {
+    const inSec = current === s.id || current.startsWith(s.id + "/");
+    const subs = (s.subs && inSec) ? `<ul class="ix-sub">${s.subs.map(sb => {
+      const k = s.id + "/" + sb.id;
+      return `<li><a class="ix-item${state.seen[k] ? " seen" : ""}" href="#/${k}" ${current === k ? 'aria-current="page"' : ""}><span class="ix-t">${sb.title}</span><span class="ix-ok" aria-hidden="true">${CHECK}</span></a></li>`;
+    }).join("")}</ul>` : "";
+    return `<li><a class="ix-item${state.seen[s.id] ? " seen" : ""}" href="#/${s.id}" ${current === s.id ? 'aria-current="page"' : ""}><span class="ix-n">${pad(s.n)}</span><span class="ix-t">${s.title}</span><span class="ix-ok" aria-hidden="true">${CHECK}</span></a>${subs}</li>`;
+  }).join("");
+  if (current === "") $("ixHome").setAttribute("aria-current", "page"); else $("ixHome").removeAttribute("aria-current");
+  document.querySelectorAll(".toc a").forEach(a => a.classList.toggle("seen", !!state.seen[a.dataset.k]));
+}
+function openIndex(open){
+  index.classList.toggle("open", open); scrim.classList.toggle("show", open);
+  menuBtn.setAttribute("aria-expanded", String(open));
+  if (open) index.querySelector("a,button").focus();
+}
+menuBtn.addEventListener("click", () => openIndex(true));
+$("ixClose").addEventListener("click", () => { openIndex(false); menuBtn.focus(); });
+scrim.addEventListener("click", () => openIndex(false));
+document.addEventListener("keydown", e => { if (e.key === "Escape" && index.classList.contains("open")) { openIndex(false); menuBtn.focus(); } });
+$("resetBtn").addEventListener("click", () => {
+  if (!confirm("Limpar o progresso de leitura deste manual?")) return;
+  state = { seen:{}, last:"" }; save(); location.hash = "#/"; refreshChrome();
+});
+
+function renderHome(){
+  const last = ROUTES.find(r => r.key === state.last);
+  const firstLabel = last ? `Continuar: ${last.title}` : "Começar a leitura";
+  const firstHref = last ? `#/${last.key}` : `#/${SECTIONS[0].id}`;
+  view.innerHTML = `
+<section class="sheet cover">
+  <div class="hero-flow">${HERO}</div>
+  <h1 class="display" tabindex="-1">Manual de mapeamento de processos</h1>
+  <p class="lead">Um guia sobre o que são processos, como eles são mapeados e redesenhados, e como ler os fluxogramas em BPMN e as páginas que compõem o Guia Prático no Notion.</p>
+  <div class="actions"><a class="btn primary" href="${firstHref}">${firstLabel}${CHEV_R}</a>${last ? `<a class="btn" href="#/${SECTIONS[0].id}">Ler do início</a>` : ""}</div>
+  <div class="howto">
+    <div><b>Leitura rápida</b><span>Cada módulo começa com um resumo dos pontos principais, pensado para o gestor.</span></div>
+    <div><b>Material de estudo</b><span>O conteúdo completo pode ser repassado aos colaboradores que consultam ou executam os processos.</span></div>
+  </div>
+</section>
+<section class="sheet">
+  <h2 class="plain section-title">Sumário</h2>
+  <p class="muted" style="font-size:.9rem">${TOTAL} módulos, pensados para leitura em sequência. O progresso fica salvo neste navegador.</p>
+  <ul class="toc">${SECTIONS.map(s => `<li><a href="#/${s.id}" data-k="${s.id}"><span><span class="n display">${pad(s.n)}.</span><b>${s.title}</b><span>${s.scope}</span></span><span class="ok" aria-label="Lido">${CHECK}</span></a></li>`).join("")}</ul>
+</section>`;
+}
+
+function renderRoute(r){
+  const s = r.sec, sb = r.sub;
+  const i = ROUTES.indexOf(r), prev = ROUTES[i-1], next = ROUTES[i+1];
+  const crumbs = [`<a href="#/">Início</a>`];
+  if (sb) crumbs.push(`<a href="#/${s.id}">${s.title}</a>`, `<span aria-current="page">${sb.title}</span>`);
+  else crumbs.push(`<span aria-current="page">${s.title}</span>`);
+  const subIndex = (!sb && s.subs) ? `<ul class="subindex">${s.subs.map(x => {
+    const k = s.id + "/" + x.id;
+    return `<li><a href="#/${k}"><span class="fig">${x.icon}</span><span><b>${x.title}</b><span>${x.desc}</span>${state.seen[k] ? `<span class="seen-tag">Lido</span>` : ""}</span></a></li>`;
+  }).join("")}</ul>` : "";
+  const time = sb ? 3 : s.time;
+  const pills = [`Módulo ${pad(s.n)} de ${pad(TOTAL)}`, sb ? `Parte de ${s.title}` : null, `Leitura: cerca de ${time} min`].filter(Boolean);
+  view.innerHTML = `
+<article class="sheet">
+  <nav class="crumbs" aria-label="Caminho">${crumbs.join("<span aria-hidden=\"true\">/</span>")}</nav>
+  <header class="mod-head">
+    <div class="mod-pills">${pills.map(p => `<span>${p}</span>`).join("")}</div>
+    <span class="mod-num display" aria-hidden="true">${pad(s.n)}.</span>
+    <h1 class="display" tabindex="-1">${sb ? sb.title : s.title}</h1>
+    <p>${sb ? sb.desc : s.scope}</p>
+  </header>
+  ${!sb && s.resumo ? resumo(s.resumo) : ""}
+  ${sb ? sb.html : s.html}
+  ${subIndex}
+  <nav class="pagenav" aria-label="Navegação entre módulos">
+    ${prev ? `<a class="btn" href="#/${prev.key}">${CHEV_L}<span><small>Voltar</small>${prev.title}</span></a>` : `<a class="btn" href="#/">${CHEV_L}<span><small>Voltar</small>Capa</span></a>`}
+    ${next ? `<a class="btn primary next" href="#/${next.key}" data-mark="${r.key}"><span><small>Avançar</small>${next.title}</span>${CHEV_R}</a>` : `<a class="btn primary next" href="#/" data-mark="${r.key}"><span><small>Fim do manual</small>Voltar à capa</span>${CHEV_R}</a>`}
+  </nav>
+</article>`;
+  const nav = view.querySelector(".pagenav");
+  if ("IntersectionObserver" in window){
+    const io = new IntersectionObserver(es => { es.forEach(e => { if (e.isIntersecting){ markSeen(r.key); io.disconnect(); } }); }, { threshold:.6 });
+    io.observe(nav);
+  }
+  nav.querySelector("[data-mark]").addEventListener("click", () => markSeen(r.key));
+}
+
+function route(){
+  const h = decodeURIComponent(location.hash.replace(/^#\/?/, ""));
+  const r = ROUTES.find(x => x.key === h);
+  current = r ? r.key : "";
+  if (r){ renderRoute(r); state.last = r.key; save(); }
+  else renderHome();
+  refreshChrome();
+  openIndex(false);
+  window.scrollTo(0, 0);
+  const h1 = view.querySelector("h1"); if (h1) h1.focus({ preventScroll:true });
+}
+window.addEventListener("hashchange", route);
+route();
+})();
+</script>
+</body>
+</html>
